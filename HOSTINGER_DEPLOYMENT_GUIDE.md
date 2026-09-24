@@ -98,3 +98,19 @@ This tool validates SQLite extensions, file permissions, tables, data records, a
   - Apache deny rules in `database/.htaccess` (`Require all denied`).
   - Strict pattern matching in root `.htaccess`.
 - **Environment & Git Security**: Direct access to `.env`, `.git`, and private storage paths are blocked with HTTP `403 Forbidden`.
+
+---
+
+## Troubleshooting: "The Process class relies on proc_open" Error
+When using Hostinger's automatic Git Deployment tool, Hostinger tries to run `composer install`. Because `proc_open` is disabled by default in Hostinger's PHP settings, Composer throws this error.
+
+### How to fix it in 30 seconds:
+1. In Hostinger **hPanel**, go to **Advanced** &rarr; **PHP Configuration**.
+2. Click on the **Disable Functions** tab.
+3. In the list of disabled functions, find and delete/remove **`proc_open`** (and `exec` if present).
+4. Click **Save** at the bottom.
+5. In **Git Deployment**, click **Deploy** again.
+
+> [!NOTE]
+> All `vendor/` dependencies and autoloader are now already committed directly in the GitHub repository, so your application is completely ready to run immediately!
+
