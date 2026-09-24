@@ -1,0 +1,22 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Prevent direct access to .env, .git, and hidden files
+    RewriteRule ^\.(.*)$ - [F,L]
+
+    # Prevent direct access to database folder and SQLite files
+    RewriteRule ^database/ - [F,L]
+    RewriteRule ^.*\.sqlite$ - [F,L]
+
+    # Prevent direct access to internal storage
+    RewriteRule ^storage/framework/ - [F,L]
+    RewriteRule ^storage/logs/ - [F,L]
+
+    # Direct all other traffic to the public directory
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
+</IfModule>
+
+# Fallback DirectoryIndex
+DirectoryIndex public/index.php index.php
+

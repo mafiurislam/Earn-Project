@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a101d" />
+      <stop offset="50%" stop-color="#111a2e" />
+      <stop offset="100%" stop-color="#050810" />
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00d2aa" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#a855f7" />
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="500" height="500" fill="url(#bgGrad)" rx="24"/>
+  <rect x="10" y="10" width="480" height="480" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2" rx="20"/>
+  <!-- Vinyl Rings -->
+  <circle cx="250" cy="250" r="190" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="12"/>
+  <circle cx="250" cy="250" r="160" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+  <circle cx="250" cy="250" r="130" fill="none" stroke="rgba(0, 210, 170, 0.2)" stroke-width="3"/>
+  <circle cx="250" cy="250" r="95" fill="none" stroke="url(#glowGrad)" stroke-width="5"/>
+  <!-- Center Core -->
+  <circle cx="250" cy="250" r="55" fill="#090d16" stroke="#00d2aa" stroke-width="3"/>
+  <!-- Musical Note Icon -->
+  <path d="M 238 275 A 18 18 0 1 1 222 258 L 222 215 C 222 212 225 210 228 210 L 268 200 C 271 199 274 201 274 204 L 274 255 A 18 18 0 1 1 258 238 L 258 222 L 238 227 L 238 275 Z" fill="url(#glowGrad)"/>
+  <!-- 3000 x 3000 Badge -->
+  <rect x="160" y="405" width="180" height="32" rx="16" fill="rgba(0, 210, 170, 0.15)" stroke="rgba(0, 210, 170, 0.4)" stroke-width="1.5"/>
+  <text x="250" y="426" font-family="'Outfit', sans-serif" font-size="13" font-weight="700" fill="#00d2aa" text-anchor="middle" letter-spacing="1">3000 × 3000 HQ COVER</text>
+</svg>
