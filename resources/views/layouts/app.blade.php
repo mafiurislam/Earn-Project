@@ -145,6 +145,15 @@
                                 <span>Withdrawal History</span>
                             </a>
 
+                            <!-- Option 6: Support Email -->
+                            <a class="user-profile-item" href="mailto:supportrajdootnivedan@gmail.com" title="supportrajdootnivedan@gmail.com">
+                                <span class="item-icon"><i class="fa-solid fa-headset text-teal"></i></span>
+                                <span class="d-inline-flex align-items-center justify-content-between flex-grow-1">
+                                    <span>Support Email</span>
+                                    <span class="small text-teal" style="font-size: 0.72rem;">Helpdesk</span>
+                                </span>
+                            </a>
+
                             <div class="user-profile-divider"></div>
 
                             <!-- Option 6: Logout (Red accent matching reference image) -->
@@ -225,6 +234,13 @@
                 <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 text-white small">
                     <div>
                         &copy; 2026 Rajdoot Nivedan Media. All rights reserved.
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-headset text-teal"></i>
+                        <span style="color: #94a3b8;">Support:</span>
+                        <a href="mailto:supportrajdootnivedan@gmail.com" class="text-teal text-decoration-none fw-semibold">
+                            supportrajdootnivedan@gmail.com
+                        </a>
                     </div>
                     <div class="fw-semibold text-white">
                         Distribute &middot; Earn &middot; Grow

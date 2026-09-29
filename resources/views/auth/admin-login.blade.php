@@ -95,6 +95,10 @@
             Customer? <a href="{{ route('login') }}" style="color: var(--teal); font-weight: 700; text-decoration: none;">Customer Login</a>
         </div>
 
+        <div style="margin-top: 14px; font-size: 0.82rem; color: #94a3b8; text-align: center;">
+            Support Email: <a href="mailto:supportrajdootnivedan@gmail.com" style="color: var(--teal); text-decoration: none; font-weight: 600;">supportrajdootnivedan@gmail.com</a>
+        </div>
+
     </div>
 
     <script>

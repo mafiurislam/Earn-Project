@@ -248,6 +248,30 @@
 
     </div>
 
+    <!-- =========================================================================
+         6. ARTIST SUPPORT DESK
+         ========================================================================= -->
+    <div class="exact-card py-3.5 px-4 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 mb-4" style="border: 1px solid rgba(0, 210, 170, 0.25);">
+        <div class="d-flex align-items-center gap-3">
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(0, 210, 170, 0.12); border: 1px solid rgba(0, 210, 170, 0.3); display: flex; align-items: center; justify-content: center; color: #00d2aa; font-size: 1.2rem;">
+                <i class="fa-solid fa-headset"></i>
+            </div>
+            <div>
+                <div class="small fw-semibold text-uppercase" style="color: #00d2aa; font-size: 0.72rem; letter-spacing: 0.5px;">Artist Support Desk</div>
+                <div class="fw-bold text-light" style="font-size: 0.96rem;">
+                    Support Email: <a href="mailto:supportrajdootnivedan@gmail.com" class="text-teal text-decoration-none">supportrajdootnivedan@gmail.com</a>
+                </div>
+                <div class="small" style="color: #94a3b8; font-size: 0.8rem;">
+                    Questions about KYC verification, withdrawals, or song distribution? Reach us anytime.
+                </div>
+            </div>
+        </div>
+        <a href="mailto:supportrajdootnivedan@gmail.com" class="btn btn-exact-teal py-2 px-3.5 small d-inline-flex align-items-center gap-2 text-decoration-none">
+            <i class="fa-solid fa-envelope"></i>
+            <span>Email Support</span>
+        </a>
+    </div>
+
 </div>
 
 <!-- =========================================================================
@@ -279,10 +303,24 @@
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold" style="color: #94a3b8;">Upload PAN Card Image</label>
                             <input type="file" name="pan_card_photo" class="form-control exact-input" accept="image/*" {{ $user->verification ? '' : 'required' }}>
+                            @if($user->verification && $user->verification->pan_card_photo_url)
+                                <div class="mt-1.5 d-flex align-items-center gap-2">
+                                    <a href="{{ $user->verification->pan_card_photo_url }}" target="_blank" class="small text-teal text-decoration-none">
+                                        <i class="fa-regular fa-image me-1"></i> View Current PAN Card
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold" style="color: #94a3b8;">Upload Signature Photo</label>
                             <input type="file" name="signature_photo" class="form-control exact-input" accept="image/*" {{ $user->verification ? '' : 'required' }}>
+                            @if($user->verification && $user->verification->signature_photo_url)
+                                <div class="mt-1.5 d-flex align-items-center gap-2">
+                                    <a href="{{ $user->verification->signature_photo_url }}" target="_blank" class="small text-info text-decoration-none">
+                                        <i class="fa-regular fa-image me-1"></i> View Current Signature
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold" style="color: #94a3b8;">Bank Account Number</label>

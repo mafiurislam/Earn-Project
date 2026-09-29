@@ -86,6 +86,11 @@
         Don't have an account? <a href="{{ route('register') }}" style="color: var(--teal); text-decoration: none; font-weight: 700;">Registration Now</a>
     </div>
 
+    <!-- Support Contact -->
+    <div style="margin-top: 14px; font-size: 0.82rem; color: #94a3b8; text-align: center;">
+        Support Email: <a href="mailto:supportrajdootnivedan@gmail.com" style="color: var(--teal); text-decoration: none; font-weight: 600;">supportrajdootnivedan@gmail.com</a>
+    </div>
+
     <script>
         function togglePasswordVisibility(inputId, btn) {
             const input = document.getElementById(inputId);

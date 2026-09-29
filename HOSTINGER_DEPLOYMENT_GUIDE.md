@@ -82,6 +82,10 @@ In Hostinger File Manager:
 | **Ta** | `rajurm063@gmail.com` | `password123` | Verified KYC | ₹0.00 |
 | **Mafiur Islam** | `mafiurislam365@gmail.com` | `password123` | Unverified | ₹0.00 |
 
+### Official Support Email:
+- **Email**: `supportrajdootnivedan@gmail.com`
+- Configured in `.env` (`MAIL_FROM_ADDRESS`), website footer, customer dropdown, homepage, customer dashboard, and auth pages.
+
 ---
 
 ## Deployment Validation Command

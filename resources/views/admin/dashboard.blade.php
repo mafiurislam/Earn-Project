@@ -265,9 +265,9 @@
 
                     <!-- Right / Bottom: Action Buttons (Signature, Verify, Reject) -->
                     <div class="d-flex align-items-center gap-2 pt-2 pt-md-0 ms-md-auto flex-shrink-0">
-                        <!-- View Signature Modal Trigger -->
+                        <!-- View Verification Documents Modal Trigger -->
                         <button type="button" class="btn btn-sm btn-dark-outline py-1.5 px-3 rounded-pill small" data-bs-toggle="modal" data-bs-target="#viewDocModal{{ $v->id }}">
-                            <i class="fa-regular fa-eye me-1 text-teal"></i> Signature
+                            <i class="fa-regular fa-id-card me-1 text-teal"></i> View KYC Docs
                         </button>
 
                         <!-- Verify Button -->
@@ -300,12 +300,19 @@
                                 <div class="col-md-6">
                                     <div class="fw-bold small text-teal mb-2">PAN Card Image</div>
                                     <div class="p-2 rounded-3 border border-secondary border-opacity-25" style="background: #070b14;">
-                                        @if($v->pan_card_photo && file_exists(public_path('storage/' . $v->pan_card_photo)))
-                                            <img src="{{ asset('storage/' . $v->pan_card_photo) }}" alt="PAN Card" class="img-fluid rounded" style="max-height: 260px; object-fit: contain;">
+                                        @if($v->pan_card_photo_url)
+                                            <a href="{{ $v->pan_card_photo_url }}" target="_blank" title="Click to view full PAN Card">
+                                                <img src="{{ $v->pan_card_photo_url }}" alt="PAN Card: {{ $v->full_name }}" class="img-fluid rounded" style="max-height: 260px; width: 100%; object-fit: contain;">
+                                            </a>
+                                            <div class="mt-2 text-center">
+                                                <a href="{{ $v->pan_card_photo_url }}" target="_blank" class="small text-teal text-decoration-none" style="font-size: 0.78rem;">
+                                                    <i class="fa-solid fa-up-right-from-square me-1"></i> Open Full Image
+                                                </a>
+                                            </div>
                                         @else
                                             <div class="py-5 text-secondary small">
                                                 <i class="fa-regular fa-id-card fs-1 d-block mb-2 text-teal opacity-50"></i>
-                                                {{ $v->pan_card_photo ?: 'No PAN card uploaded' }}
+                                                No PAN card uploaded
                                             </div>
                                         @endif
                                     </div>
@@ -313,12 +320,19 @@
                                 <div class="col-md-6">
                                     <div class="fw-bold small text-info mb-2">Signature Photo</div>
                                     <div class="p-2 rounded-3 border border-secondary border-opacity-25" style="background: #070b14;">
-                                        @if($v->signature_photo && file_exists(public_path('storage/' . $v->signature_photo)))
-                                            <img src="{{ asset('storage/' . $v->signature_photo) }}" alt="Signature" class="img-fluid rounded" style="max-height: 260px; object-fit: contain;">
+                                        @if($v->signature_photo_url)
+                                            <a href="{{ $v->signature_photo_url }}" target="_blank" title="Click to view full Signature">
+                                                <img src="{{ $v->signature_photo_url }}" alt="Signature: {{ $v->full_name }}" class="img-fluid rounded" style="max-height: 260px; width: 100%; object-fit: contain;">
+                                            </a>
+                                            <div class="mt-2 text-center">
+                                                <a href="{{ $v->signature_photo_url }}" target="_blank" class="small text-info text-decoration-none" style="font-size: 0.78rem;">
+                                                    <i class="fa-solid fa-up-right-from-square me-1"></i> Open Full Image
+                                                </a>
+                                            </div>
                                         @else
                                             <div class="py-5 text-secondary small">
                                                 <i class="fa-solid fa-signature fs-1 d-block mb-2 text-info opacity-50"></i>
-                                                {{ $v->signature_photo ?: 'No signature uploaded' }}
+                                                No signature uploaded
                                             </div>
                                         @endif
                                     </div>
@@ -681,6 +695,66 @@
                                                         </span>
                                                     @endif
                                                 </div>
+                                            </div>
+
+                                            <!-- 6. Uploaded Verification Documents (PAN Card & Signature) -->
+                                            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07);">
+                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                    <div class="small text-secondary text-uppercase fw-semibold" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+                                                        <i class="fa-solid fa-shield-halved text-teal me-1.5"></i> Uploaded Verification Documents
+                                                    </div>
+                                                    @if($user->verification)
+                                                        <span class="badge {{ $user->verification->status === 'approved' ? 'badge-approved' : ($user->verification->status === 'rejected' ? 'badge-rejected' : 'badge-pending') }} py-0.5 px-2 text-uppercase" style="font-size: 0.68rem;">
+                                                            {{ $user->verification->status }}
+                                                        </span>
+                                                    @else
+                                                        <span class="badge badge-unverified py-0.5 px-2 text-uppercase" style="font-size: 0.68rem;">
+                                                            Unverified
+                                                        </span>
+                                                    @endif
+                                                </div>
+
+                                                @if($user->verification && ($user->verification->pan_card_photo_url || $user->verification->signature_photo_url))
+                                                    <div class="row g-2 mt-1">
+                                                        <!-- PAN Card Image -->
+                                                        <div class="col-6 text-center">
+                                                            <div class="small fw-semibold text-secondary mb-1" style="font-size: 0.74rem;">PAN Card Image</div>
+                                                            <div class="p-1.5 rounded-3 border border-secondary border-opacity-25" style="background: #070b14;">
+                                                                @if($user->verification->pan_card_photo_url)
+                                                                    <a href="{{ $user->verification->pan_card_photo_url }}" target="_blank" title="Click to view full PAN Card">
+                                                                        <img src="{{ $user->verification->pan_card_photo_url }}" alt="PAN Card: {{ $user->name }}" class="img-fluid rounded" style="max-height: 120px; width: 100%; object-fit: contain;">
+                                                                    </a>
+                                                                    <a href="{{ $user->verification->pan_card_photo_url }}" target="_blank" class="small text-teal text-decoration-none d-block mt-1" style="font-size: 0.72rem;">
+                                                                        <i class="fa-solid fa-up-right-from-square me-1"></i> Full View
+                                                                    </a>
+                                                                @else
+                                                                    <span class="text-secondary small d-block py-3" style="font-size: 0.75rem;">Not uploaded</span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Signature Photo -->
+                                                        <div class="col-6 text-center">
+                                                            <div class="small fw-semibold text-secondary mb-1" style="font-size: 0.74rem;">Signature Photo</div>
+                                                            <div class="p-1.5 rounded-3 border border-secondary border-opacity-25" style="background: #070b14;">
+                                                                @if($user->verification->signature_photo_url)
+                                                                    <a href="{{ $user->verification->signature_photo_url }}" target="_blank" title="Click to view full Signature">
+                                                                        <img src="{{ $user->verification->signature_photo_url }}" alt="Signature: {{ $user->name }}" class="img-fluid rounded" style="max-height: 120px; width: 100%; object-fit: contain;">
+                                                                    </a>
+                                                                    <a href="{{ $user->verification->signature_photo_url }}" target="_blank" class="small text-info text-decoration-none d-block mt-1" style="font-size: 0.72rem;">
+                                                                        <i class="fa-solid fa-up-right-from-square me-1"></i> Full View
+                                                                    </a>
+                                                                @else
+                                                                    <span class="text-secondary small d-block py-3" style="font-size: 0.75rem;">Not uploaded</span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="text-secondary small py-2 text-center" style="font-size: 0.8rem;">
+                                                        <i class="fa-regular fa-folder-open me-1 opacity-50"></i> No verification documents uploaded yet.
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
 

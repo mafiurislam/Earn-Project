@@ -287,6 +287,35 @@
 
     </div>
 
+    <!-- =========================================================================
+         5. 24/7 ARTIST SUPPORT SECTION
+         ========================================================================= -->
+    <div class="my-5 p-4 p-md-5 rounded-4 position-relative" style="background: #0d1526; border: 1px solid rgba(0, 210, 170, 0.25); box-shadow: 0 10px 40px rgba(0,0,0,0.4);">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill mb-3" style="background: rgba(0, 210, 170, 0.08); border: 1px solid rgba(0, 210, 170, 0.35);">
+                    <i class="fa-solid fa-headset text-teal" style="font-size: 0.85rem;"></i>
+                    <span class="small fw-semibold text-teal">Dedicated Artist Support</span>
+                </div>
+                <h3 class="display-6 fw-bold text-light mb-2">
+                    Need help with your music or account?
+                </h3>
+                <p class="text-white fs-6 mb-0" style="color: #cbd5e1 !important; max-width: 620px;">
+                    Our artist support desk is ready to help with your distribution, live royalties, KYC verification, copyright claim removals, and technical questions.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="d-inline-flex flex-column align-items-lg-end align-items-start gap-2">
+                    <span class="small text-uppercase fw-bold" style="color: #94a3b8; font-size: 0.75rem; letter-spacing: 0.5px;">Support Email</span>
+                    <a href="mailto:supportrajdootnivedan@gmail.com" class="btn-teal fs-6 py-2.5 px-4 d-inline-flex align-items-center gap-2 text-decoration-none">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span>supportrajdootnivedan@gmail.com</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 @endsection
 

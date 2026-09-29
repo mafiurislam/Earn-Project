@@ -102,6 +102,10 @@ Route::get('/storage/{path}', function (string $path) {
 
     $filePath = storage_path('app/public/'.$path);
     if (! file_exists($filePath)) {
+        $filePath = public_path('storage/'.$path);
+    }
+
+    if (! file_exists($filePath)) {
         abort(404, 'File not found.');
     }
 

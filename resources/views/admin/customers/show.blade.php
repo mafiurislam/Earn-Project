@@ -648,20 +648,34 @@
                                     <div class="col-sm-6 text-center">
                                         <div class="small fw-semibold text-secondary mb-2">PAN Card Image</div>
                                         <div class="p-2 border border-secondary border-opacity-25 rounded-3 bg-black">
-                                            @if($customer->verification->pan_card_photo)
-                                                <img src="{{ asset('storage/' . $customer->verification->pan_card_photo) }}" alt="PAN Card" class="img-fluid rounded" style="max-height: 180px; object-fit: contain;">
+                                            @if($customer->verification && $customer->verification->pan_card_photo_url)
+                                                <a href="{{ $customer->verification->pan_card_photo_url }}" target="_blank" title="Click to view full PAN Card">
+                                                    <img src="{{ $customer->verification->pan_card_photo_url }}" alt="PAN Card: {{ $customer->name }}" class="img-fluid rounded" style="max-height: 180px; width: 100%; object-fit: contain;">
+                                                </a>
+                                                <div class="mt-2 text-center">
+                                                    <a href="{{ $customer->verification->pan_card_photo_url }}" target="_blank" class="small text-teal text-decoration-none" style="font-size: 0.78rem;">
+                                                        <i class="fa-solid fa-up-right-from-square me-1"></i> Open Full Image
+                                                    </a>
+                                                </div>
                                             @else
-                                                <span class="text-secondary small">No document uploaded</span>
+                                                <span class="text-secondary small d-block py-4">No document uploaded</span>
                                             @endif
                                         </div>
                                     </div>
                                     <div class="col-sm-6 text-center">
                                         <div class="small fw-semibold text-secondary mb-2">Signature Photo</div>
                                         <div class="p-2 border border-secondary border-opacity-25 rounded-3 bg-black">
-                                            @if($customer->verification->signature_photo)
-                                                <img src="{{ asset('storage/' . $customer->verification->signature_photo) }}" alt="Signature" class="img-fluid rounded" style="max-height: 180px; object-fit: contain;">
+                                            @if($customer->verification && $customer->verification->signature_photo_url)
+                                                <a href="{{ $customer->verification->signature_photo_url }}" target="_blank" title="Click to view full Signature">
+                                                    <img src="{{ $customer->verification->signature_photo_url }}" alt="Signature: {{ $customer->name }}" class="img-fluid rounded" style="max-height: 180px; width: 100%; object-fit: contain;">
+                                                </a>
+                                                <div class="mt-2 text-center">
+                                                    <a href="{{ $customer->verification->signature_photo_url }}" target="_blank" class="small text-info text-decoration-none" style="font-size: 0.78rem;">
+                                                        <i class="fa-solid fa-up-right-from-square me-1"></i> Open Full Image
+                                                    </a>
+                                                </div>
                                             @else
-                                                <span class="text-secondary small">No document uploaded</span>
+                                                <span class="text-secondary small d-block py-4">No document uploaded</span>
                                             @endif
                                         </div>
                                     </div>
