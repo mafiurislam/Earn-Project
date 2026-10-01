@@ -139,6 +139,38 @@ class AdminController extends Controller
     }
 
     /**
+     * Admin download customer's uploaded 3000x3000px Cover Image.
+     */
+    public function downloadCover($id)
+    {
+        $song = Song::with('user')->findOrFail($id);
+
+        $filePath = null;
+        $clean = ltrim(str_replace('storage/', '', $song->cover_image ?? ''), '/\\');
+
+        if (! empty($clean)) {
+            if (Storage::disk('public')->exists($clean)) {
+                $filePath = Storage::disk('public')->path($clean);
+            } elseif (file_exists(storage_path('app/public/'.$clean))) {
+                $filePath = storage_path('app/public/'.$clean);
+            } elseif (file_exists(public_path('storage/'.$clean))) {
+                $filePath = public_path('storage/'.$clean);
+            }
+        }
+
+        if (! $filePath || ! file_exists($filePath)) {
+            abort(404, 'Cover image file not found on server.');
+        }
+
+        $extension = pathinfo($filePath, PATHINFO_EXTENSION) ?: 'jpg';
+        $downloadName = Str::slug($song->title ?: 'cover').'-cover.'.$extension;
+
+        return response()->download($filePath, $downloadName, [
+            'Content-Type' => mime_content_type($filePath) ?: 'image/jpeg',
+        ]);
+    }
+
+    /**
      * Admin download customer's uploaded PAN Card document.
      */
     public function downloadPanCard($id)

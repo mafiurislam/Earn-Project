@@ -9,6 +9,7 @@ use App\Http\Controllers\SongController;
 use App\Http\Controllers\VerificationController;
 use App\Models\CopyrightClaimLink;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 // Public Home / Landing Page
 Route::get('/', function () {
@@ -68,10 +69,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/customer/songs/{id}', [SongController::class, 'update'])->name('customer.songs.update');
     Route::delete('/customer/songs/{id}', [SongController::class, 'destroy'])->name('customer.songs.destroy');
     Route::get('/customer/songs/{id}/download', [SongController::class, 'download'])->name('customer.songs.download');
+    Route::get('/customer/songs/{id}/cover/download', [SongController::class, 'downloadCover'])->name('customer.songs.download_cover');
 
     // Admin Dashboard & Control
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/songs/{id}/download', [AdminController::class, 'downloadSong'])->name('admin.songs.download');
+    Route::get('/admin/songs/{id}/cover/download', [AdminController::class, 'downloadCover'])->name('admin.songs.download_cover');
     Route::get('/admin/verification/{id}/download-pan', [AdminController::class, 'downloadPanCard'])->name('admin.verification.download_pan');
     Route::get('/admin/verification/{id}/download-signature', [AdminController::class, 'downloadSignature'])->name('admin.verification.download_signature');
     Route::get('/admin/customers/{id}/download-pan', [AdminController::class, 'downloadPanCard'])->name('admin.customers.download_pan');
@@ -106,12 +109,18 @@ Route::get('/storage/{path}', function (string $path) {
         abort(403, 'Unauthorized path traversal attempt.');
     }
 
-    $filePath = storage_path('app/public/'.$path);
-    if (! file_exists($filePath)) {
-        $filePath = public_path('storage/'.$path);
+    $clean = ltrim(str_replace('storage/', '', $path), '/\\');
+    $filePath = null;
+
+    if (Storage::disk('public')->exists($clean)) {
+        $filePath = Storage::disk('public')->path($clean);
+    } elseif (file_exists(storage_path('app/public/'.$clean))) {
+        $filePath = storage_path('app/public/'.$clean);
+    } elseif (file_exists(public_path('storage/'.$clean))) {
+        $filePath = public_path('storage/'.$clean);
     }
 
-    if (! file_exists($filePath)) {
+    if (! $filePath || ! file_exists($filePath)) {
         abort(404, 'File not found.');
     }
 

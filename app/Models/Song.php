@@ -109,7 +109,7 @@ class Song extends Model
             self::syncToPublic($clean);
 
             if (file_exists(public_path('storage/'.$clean)) || file_exists(storage_path('app/public/'.$clean)) || Storage::disk('public')->exists($clean)) {
-                return asset('storage/'.$clean);
+                return request()->root() ? url('storage/'.$clean) : asset('storage/'.$clean);
             }
         }
 
@@ -130,7 +130,7 @@ class Song extends Model
 
             self::syncToPublic($clean);
 
-            return asset('storage/'.$clean);
+            return request()->root() ? url('storage/'.$clean) : asset('storage/'.$clean);
         }
 
         return '';

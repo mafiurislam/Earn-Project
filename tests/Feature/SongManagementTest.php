@@ -416,4 +416,74 @@ class SongManagementTest extends TestCase
         $downloadResponse->assertOk();
         $downloadResponse->assertHeader('content-type', 'audio/mpeg');
     }
+
+    public function test_admin_and_customer_can_download_exact_cover_image(): void
+    {
+        $coverFile = UploadedFile::fake()->image('albumcover.jpg', 3000, 3000);
+        $audioFile = UploadedFile::fake()->create('track.mp3', 3000, 'audio/mpeg');
+
+        $this->actingAs($this->customer)
+            ->post(route('customer.songs.store'), [
+                'title' => 'Cover Download Test Song',
+                'singer' => 'Singer B',
+                'composer' => 'Composer B',
+                'producer' => 'Producer B',
+                'cover_image' => $coverFile,
+                'audio_file' => $audioFile,
+            ]);
+
+        $song = Song::where('title', 'Cover Download Test Song')->first();
+        $this->assertNotNull($song);
+
+        // Admin downloads the cover image
+        $adminCoverDownload = $this->actingAs($this->admin)
+            ->get(route('admin.songs.download_cover', $song->id));
+
+        $adminCoverDownload->assertOk();
+        $adminCoverDownload->assertHeader('content-type', 'image/jpeg');
+        $this->assertStringContainsString('cover-download-test-song-cover.jpg', $adminCoverDownload->headers->get('content-disposition'));
+
+        // Customer downloads their own cover image
+        $customerCoverDownload = $this->actingAs($this->customer)
+            ->get(route('customer.songs.download_cover', $song->id));
+
+        $customerCoverDownload->assertOk();
+        $customerCoverDownload->assertHeader('content-type', 'image/jpeg');
+
+        // Admin Dashboard contains working Download Cover button
+        $adminDashboardResponse = $this->actingAs($this->admin)->get(route('admin.dashboard'));
+        $adminDashboardResponse->assertOk();
+        $adminDashboardResponse->assertSee(route('admin.songs.download_cover', $song->id));
+
+        // Customer profile page contains working Download Cover button
+        $customerShowResponse = $this->actingAs($this->admin)->get(route('admin.customers.show', $this->customer->id));
+        $customerShowResponse->assertOk();
+        $customerShowResponse->assertSee(route('admin.songs.download_cover', $song->id));
+    }
+
+    public function test_public_storage_cover_image_is_accessible_via_http(): void
+    {
+        $coverFile = UploadedFile::fake()->image('art3000.jpg', 3000, 3000);
+        $audioFile = UploadedFile::fake()->create('track.mp3', 3000, 'audio/mpeg');
+
+        $this->actingAs($this->customer)
+            ->post(route('customer.songs.store'), [
+                'title' => 'Artwork Storage Access Test',
+                'singer' => 'Singer C',
+                'composer' => 'Composer C',
+                'producer' => 'Producer C',
+                'cover_image' => $coverFile,
+                'audio_file' => $audioFile,
+            ]);
+
+        $song = Song::where('title', 'Artwork Storage Access Test')->first();
+        $this->assertNotNull($song);
+
+        $clean = ltrim(str_replace('storage/', '', $song->cover_image), '/\\');
+
+        // Access via storage route
+        $storageResponse = $this->get('/storage/'.$clean);
+        $storageResponse->assertOk();
+        $storageResponse->assertHeader('content-type', 'image/jpeg');
+    }
 }

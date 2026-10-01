@@ -111,9 +111,14 @@
 
         <div>
             @if($user->isVerified())
-                <span class="badge px-3 py-2 rounded-pill fw-bold" style="background: rgba(0, 210, 170, 0.12); color: #00d2aa; border: 1px solid rgba(0, 210, 170, 0.3);">
-                    <i class="fa-solid fa-circle-check me-1"></i> Verified
-                </span>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge px-3 py-2 rounded-pill fw-bold" style="background: rgba(0, 210, 170, 0.12); color: #00d2aa; border: 1px solid rgba(0, 210, 170, 0.3);">
+                        <i class="fa-solid fa-circle-check me-1"></i> Verified
+                    </span>
+                    <button type="button" class="btn btn-sm btn-dark-outline py-1.5 px-3 rounded-pill text-teal" data-bs-toggle="modal" data-bs-target="#verifyModal" title="View or update your uploaded PAN Card and Signature">
+                        <i class="fa-solid fa-id-card me-1"></i> View / Update Docs
+                    </button>
+                </div>
             @else
                 <button type="button" class="btn btn-exact-teal py-2 px-3.5" data-bs-toggle="modal" data-bs-target="#verifyModal">
                     <i class="fa-solid fa-shield-halved me-1.5"></i> Update details

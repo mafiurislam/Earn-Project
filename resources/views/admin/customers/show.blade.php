@@ -364,18 +364,25 @@
                                                 <span class="text-secondary">{{ $song->created_at->format('M d, Y') }}</span>
                                             </div>
                                             <audio controls class="w-100" style="height: 36px; border-radius: 6px;" preload="metadata" src="{{ $song->audio_file_url }}"></audio>
-                                            <div class="d-flex justify-content-between small text-white" style="font-size: 0.72rem;">
+                                            <div class="d-flex justify-content-between small text-white flex-wrap gap-2" style="font-size: 0.72rem;">
                                                 <a href="{{ route('admin.songs.download', $song->id) }}" class="text-decoration-none text-info fw-semibold">
                                                     <i class="fa-solid fa-download me-1"></i> Download MP3
                                                 </a>
-                                                <span class="badge px-2 py-0.5 rounded-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">Active</span>
+                                                <a href="{{ route('admin.songs.download_cover', $song->id) }}" class="text-decoration-none text-teal fw-semibold">
+                                                    <i class="fa-regular fa-image me-1"></i> Download Cover
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Admin CRUD Actions: Edit & Delete -->
+                                    <!-- Admin CRUD Actions: Download Cover, Edit & Delete -->
                                     <div class="col-12 col-md-auto col-lg-auto ms-md-auto text-end">
-                                        <div class="d-flex d-md-inline-flex gap-2 w-100 justify-content-end">
+                                        <div class="d-flex d-md-inline-flex gap-2 w-100 justify-content-end flex-wrap">
+                                            <!-- Download Cover Image -->
+                                            <a href="{{ route('admin.songs.download_cover', $song->id) }}" class="btn btn-sm btn-dark-outline py-1.5 px-3 w-100 w-md-auto text-nowrap" style="color: #00d2aa; border-color: rgba(0, 210, 170, 0.4);" title="Download 3000 × 3000 px Cover Image">
+                                                <i class="fa-regular fa-image me-1"></i> Cover Image
+                                            </a>
+
                                             <!-- Edit Song -->
                                             <button type="button" class="btn btn-sm btn-hero-cyan py-1.5 px-3 w-50 w-md-auto" data-bs-toggle="modal" data-bs-target="#adminEditSongModal{{ $song->id }}" title="Edit Song Details">
                                                 <i class="fa-regular fa-pen-to-square me-1"></i> Edit
@@ -413,8 +420,8 @@
                                                 <span class="badge px-3 py-1.5 rounded-pill" style="background: rgba(0, 210, 170, 0.15); color: #00d2aa; border: 1px solid rgba(0, 210, 170, 0.35);">
                                                     Full 3000 &times; 3000 px High-Res Artwork
                                                 </span>
-                                                <a href="{{ $song->cover_image_url }}" download="{{ Str::slug($song->title) }}-cover.jpg" target="_blank" class="btn btn-sm btn-hero-primary py-1.5 px-3 rounded-pill fw-bold">
-                                                    <i class="fa-solid fa-download me-1"></i> Download Cover
+                                                <a href="{{ route('admin.songs.download_cover', $song->id) }}" class="btn btn-sm btn-hero-primary py-1.5 px-3 rounded-pill fw-bold">
+                                                    <i class="fa-solid fa-download me-1"></i> Download Cover Image
                                                 </a>
                                             </div>
                                         </div>

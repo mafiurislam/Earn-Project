@@ -197,6 +197,9 @@
                                 <a href="{{ route('customer.songs.download', $song->id) }}" class="btn btn-sm btn-exact-teal py-1.5 px-3 rounded-pill small fw-semibold" title="Download exact MP3 song file">
                                     <i class="fa-solid fa-download me-1"></i> Download MP3
                                 </a>
+                                <a href="{{ route('customer.songs.download_cover', $song->id) }}" class="btn btn-sm btn-dark-outline py-1.5 px-3 rounded-pill small fw-semibold text-teal" style="border-color: rgba(0, 210, 170, 0.4);" title="Download 3000 × 3000 px Cover Image">
+                                    <i class="fa-regular fa-image me-1"></i> Cover Image
+                                </a>
                                 <button type="button" class="btn btn-sm btn-dark-outline py-1.5 px-3 rounded-pill small fw-semibold text-info" style="border-color: rgba(56, 189, 248, 0.3);" data-bs-toggle="modal" data-bs-target="#editSongModal{{ $song->id }}">
                                     <i class="fa-regular fa-pen-to-square me-1"></i> Edit
                                 </button>
@@ -222,9 +225,12 @@
                                 </div>
                                 <div class="modal-body p-4 text-center">
                                     <img src="{{ $song->cover_image_url }}" alt="{{ $song->title }}" class="img-fluid rounded mb-3" style="max-height: 440px; object-fit: contain;">
-                                    <div>
-                                        <a href="{{ $song->cover_image_url }}" download target="_blank" class="btn btn-exact-teal py-1.5 px-3 small">
+                                    <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                        <a href="{{ route('customer.songs.download_cover', $song->id) }}" class="btn btn-exact-teal py-1.5 px-3.5 rounded-pill small fw-bold">
                                             <i class="fa-solid fa-download me-1"></i> Download Artwork
+                                        </a>
+                                        <a href="{{ $song->cover_image_url }}" target="_blank" class="btn btn-dark-outline py-1.5 px-3 rounded-pill small">
+                                            <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open Full View
                                         </a>
                                     </div>
                                 </div>

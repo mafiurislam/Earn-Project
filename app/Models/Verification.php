@@ -93,7 +93,7 @@ class Verification extends Model
 
             // Check if file exists in Storage or on disk
             if (Storage::disk('public')->exists($clean) || file_exists(storage_path('app/public/'.$clean)) || file_exists(public_path('storage/'.$clean))) {
-                return asset('storage/'.$clean);
+                return request()->root() ? url('storage/'.$clean) : asset('storage/'.$clean);
             }
         }
 
@@ -101,15 +101,15 @@ class Verification extends Model
         if (! empty($defaultFallback)) {
             $fallbackClean = ltrim($defaultFallback, '/');
             if (Storage::disk('public')->exists($fallbackClean) || file_exists(storage_path('app/public/'.$fallbackClean)) || file_exists(public_path('storage/'.$fallbackClean))) {
-                return asset('storage/'.$fallbackClean);
+                return request()->root() ? url('storage/'.$fallbackClean) : asset('storage/'.$fallbackClean);
             }
 
             $basename = basename($fallbackClean);
             if (file_exists(public_path('images/'.$basename))) {
-                return asset('images/'.$basename);
+                return request()->root() ? url('images/'.$basename) : asset('images/'.$basename);
             }
         }
 
-        return ! empty($path) ? asset('storage/'.ltrim($path, '/')) : null;
+        return ! empty($path) ? (request()->root() ? url('storage/'.ltrim($path, '/')) : asset('storage/'.ltrim($path, '/'))) : null;
     }
 }

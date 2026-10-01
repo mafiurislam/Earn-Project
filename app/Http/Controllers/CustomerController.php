@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Verification;
 use App\Models\Withdrawal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,6 +41,8 @@ class CustomerController extends Controller
             'channel_name' => 'required|string|max:255',
             'youtube_link' => 'required|string|max:500',
             'label_name' => 'required|string|max:255',
+            'pan_card_photo' => 'nullable|file|mimes:jpg,jpeg,png,webp,pdf|max:10240',
+            'signature_photo' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:10240',
         ], [
             'owner_name.required' => 'Owner Name is required.',
             'channel_name.required' => 'YouTube Channel Name is required.',
@@ -58,6 +61,45 @@ class CustomerController extends Controller
                 'label_name' => trim($validated['label_name']),
             ]
         );
+
+        if ($request->hasFile('pan_card_photo') || $request->hasFile('signature_photo')) {
+            $verification = Verification::firstOrNew(['user_id' => $user->id]);
+            if (empty($verification->full_name)) {
+                $verification->full_name = $user->name;
+            }
+            if (empty($verification->phone)) {
+                $verification->phone = $user->phone ?? '9999999999';
+            }
+            if (empty($verification->email)) {
+                $verification->email = $user->email;
+            }
+            if (empty($verification->pan_number)) {
+                $verification->pan_number = 'PANPENDING';
+            }
+            if (empty($verification->bank_account)) {
+                $verification->bank_account = 'PENDING';
+            }
+            if (empty($verification->ifsc_code)) {
+                $verification->ifsc_code = 'PENDING';
+            }
+            if (empty($verification->status)) {
+                $verification->status = 'pending';
+            }
+
+            if ($request->hasFile('pan_card_photo')) {
+                $panPath = $request->file('pan_card_photo')->store('verifications', 'public');
+                $verification->pan_card_photo = $panPath;
+                Verification::syncToPublic($panPath);
+            }
+
+            if ($request->hasFile('signature_photo')) {
+                $sigPath = $request->file('signature_photo')->store('verifications', 'public');
+                $verification->signature_photo = $sigPath;
+                Verification::syncToPublic($sigPath);
+            }
+
+            $verification->save();
+        }
 
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([

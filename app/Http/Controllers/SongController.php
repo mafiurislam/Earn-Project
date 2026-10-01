@@ -152,6 +152,42 @@ class SongController extends Controller
     }
 
     /**
+     * Download the exact customer uploaded cover image.
+     */
+    public function downloadCover($id)
+    {
+        $song = Song::with('user')->findOrFail($id);
+
+        if (! Auth::user()->is_admin && $song->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized access to this cover image.');
+        }
+
+        $filePath = null;
+        $clean = ltrim(str_replace('storage/', '', $song->cover_image ?? ''), '/\\');
+
+        if (! empty($clean)) {
+            if (Storage::disk('public')->exists($clean)) {
+                $filePath = Storage::disk('public')->path($clean);
+            } elseif (file_exists(storage_path('app/public/'.$clean))) {
+                $filePath = storage_path('app/public/'.$clean);
+            } elseif (file_exists(public_path('storage/'.$clean))) {
+                $filePath = public_path('storage/'.$clean);
+            }
+        }
+
+        if (! $filePath || ! file_exists($filePath)) {
+            abort(404, 'Cover image file not found on server.');
+        }
+
+        $extension = pathinfo($filePath, PATHINFO_EXTENSION) ?: 'jpg';
+        $downloadName = Str::slug($song->title ?: 'cover').'-cover.'.$extension;
+
+        return response()->download($filePath, $downloadName, [
+            'Content-Type' => mime_content_type($filePath) ?: 'image/jpeg',
+        ]);
+    }
+
+    /**
      * Process cover image and ensure 3000x3000px dimensions using GD, then store in storage/app/public/songs/covers
      */
     public function processAndStoreCover($file): string
@@ -167,28 +203,34 @@ class SongController extends Controller
             $origW = imagesx($src);
             $origH = imagesy($src);
 
-            ob_start();
             if ($origW === 3000 && $origH === 3000) {
-                // Already exact 3000x3000px, stream directly
-                imagejpeg($src, null, 92);
-            } else {
-                // Resample and fit to exact 3000x3000px high resolution
-                $target = imagecreatetruecolor(3000, 3000);
+                // Already exact 3000x3000px, store original file directly to preserve 100% quality
+                imagedestroy($src);
+                $storedPath = $file->store('songs/covers', 'public');
+                Song::syncToPublic($storedPath);
 
-                // Fill with dark background before copying
-                $bg = imagecolorallocate($target, 10, 16, 29);
-                imagefill($target, 0, 0, $bg);
-
-                // Center crop or fit
-                $minDim = min($origW, $origH);
-                $cropX = (int) (($origW - $minDim) / 2);
-                $cropY = (int) (($origH - $minDim) / 2);
-
-                imagecopyresampled($target, $src, 0, 0, $cropX, $cropY, 3000, 3000, $minDim, $minDim);
-                imagejpeg($target, null, 92);
-                imagedestroy($target);
+                return $storedPath;
             }
+
+            // Resample and fit to exact 3000x3000px high resolution
+            $target = imagecreatetruecolor(3000, 3000);
+
+            // Fill with dark background before copying
+            $bg = imagecolorallocate($target, 10, 16, 29);
+            imagefill($target, 0, 0, $bg);
+
+            // Center crop or fit
+            $minDim = min($origW, $origH);
+            $cropX = (int) (($origW - $minDim) / 2);
+            $cropY = (int) (($origH - $minDim) / 2);
+
+            imagecopyresampled($target, $src, 0, 0, $cropX, $cropY, 3000, 3000, $minDim, $minDim);
+
+            ob_start();
+            imagejpeg($target, null, 95);
             $streamData = ob_get_clean();
+
+            imagedestroy($target);
             imagedestroy($src);
 
             Storage::disk('public')->put($filename, $streamData);

@@ -91,10 +91,12 @@ class User extends Authenticatable
     public function getProfilePhotoUrlAttribute()
     {
         if ($this->profile_photo) {
-            return asset('storage/'.$this->profile_photo);
+            $clean = ltrim(str_replace('storage/', '', $this->profile_photo), '/\\');
+
+            return request()->root() ? url('storage/'.$clean) : asset('storage/'.$clean);
         }
 
-        return asset('images/default-avatar.png');
+        return request()->root() ? url('images/default-avatar.png') : asset('images/default-avatar.png');
     }
 
     public function getWithdrawnAmountAttribute(): float

@@ -808,6 +808,53 @@
                                             </div>
                                         </div>
 
+                                        <!-- 7. Customer's Uploaded Tracks & 3000 × 3000 px Cover Art -->
+                                        <div class="p-3 rounded-3 mt-3" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07);">
+                                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                                <div class="small text-secondary text-uppercase fw-semibold" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+                                                    <i class="fa-solid fa-compact-disc text-teal me-1.5"></i> Customer's Uploaded Tracks &amp; 3000 &times; 3000 px Cover Art
+                                                </div>
+                                                <span class="badge rounded-pill fw-bold text-dark px-2 py-0.5" style="background: #00d2aa; font-size: 0.68rem;">
+                                                    {{ $user->songs->count() }} Tracks
+                                                </span>
+                                            </div>
+
+                                            @if($user->songs->count() > 0)
+                                                <div class="d-flex flex-column gap-2 mt-2">
+                                                    @foreach($user->songs as $cSong)
+                                                        <div class="p-2 rounded-2 d-flex align-items-center justify-content-between gap-3 flex-wrap" style="background: #070b14; border: 1px solid rgba(255, 255, 255, 0.06);">
+                                                            <div class="d-flex align-items-center gap-2.5">
+                                                                <div class="position-relative" style="width: 44px; height: 44px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0, 210, 170, 0.35); background: #000; flex-shrink: 0;">
+                                                                    <img src="{{ $cSong->cover_image_url }}" alt="{{ $cSong->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                </div>
+                                                                <div>
+                                                                    <div class="fw-bold text-light" style="font-size: 0.85rem;">{{ $cSong->title }}</div>
+                                                                    <div class="text-teal small" style="font-size: 0.75rem;">
+                                                                        <i class="fa-solid fa-microphone me-0.5"></i> {{ $cSong->singer }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex align-items-center gap-1.5 ms-auto flex-wrap">
+                                                                <a href="{{ route('admin.songs.download_cover', $cSong->id) }}" class="btn btn-sm btn-dark-outline py-0.5 px-2 rounded-pill small fw-bold text-teal" style="font-size: 0.7rem; border-color: rgba(0, 210, 170, 0.35);" title="Download 3000 × 3000 px Cover Artwork">
+                                                                    <i class="fa-regular fa-image me-1"></i> Cover
+                                                                </a>
+                                                                <a href="{{ route('admin.songs.download', $cSong->id) }}" class="btn btn-sm btn-exact-teal py-0.5 px-2 rounded-pill small fw-bold" style="font-size: 0.7rem;" title="Download MP3">
+                                                                    <i class="fa-solid fa-download me-1"></i> MP3
+                                                                </a>
+                                                                <a href="{{ $cSong->cover_image_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-0.5 px-1.5 rounded-pill small text-secondary" style="font-size: 0.7rem;" title="Open cover image in full resolution">
+                                                                    <i class="fa-solid fa-up-right-from-square"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <div class="text-secondary small py-2 text-center" style="font-size: 0.8rem;">
+                                                    <i class="fa-solid fa-music me-1 opacity-50"></i> No songs or cover images uploaded yet by this customer.
+                                                </div>
+                                            @endif
+                                        </div>
+
                                         @if($user->profileInfo)
                                             <div class="mt-3 text-end small text-secondary" style="font-size: 0.75rem;">
                                                 Last updated: {{ $user->profileInfo->updated_at->format('M d, Y h:i A') }}
@@ -1149,17 +1196,22 @@
                                 </div>
                             </td>
 
-                            <!-- Actions: Download MP3, Inspect Cover, Edit, Delete -->
+                            <!-- Actions: Download MP3, Download Cover, Inspect Cover, Edit, Delete -->
                             <td class="text-end">
-                                <div class="d-inline-flex align-items-center gap-2">
+                                <div class="d-inline-flex align-items-center gap-2 flex-wrap justify-content-end">
                                     <!-- Download MP3 Button -->
-                                    <a href="{{ route('admin.songs.download', $song->id) }}" class="btn btn-sm btn-exact-teal py-1.5 px-3 small fw-bold d-inline-flex align-items-center gap-1.5 text-nowrap" title="Download original MP3 audio file">
-                                        <i class="fa-solid fa-download"></i> <span>Download MP3</span>
+                                    <a href="{{ route('admin.songs.download', $song->id) }}" class="btn btn-sm btn-exact-teal py-1.5 px-2.5 small fw-bold d-inline-flex align-items-center gap-1.5 text-nowrap" title="Download original MP3 audio file">
+                                        <i class="fa-solid fa-download"></i> <span>MP3</span>
+                                    </a>
+
+                                    <!-- Download Cover Button -->
+                                    <a href="{{ route('admin.songs.download_cover', $song->id) }}" class="btn btn-sm btn-dark-outline py-1.5 px-2.5 small fw-bold d-inline-flex align-items-center gap-1.5 text-nowrap" style="color: #00d2aa; border-color: rgba(0, 210, 170, 0.4);" title="Download 3000 × 3000 px Cover Artwork">
+                                        <i class="fa-regular fa-image"></i> <span>Cover</span>
                                     </a>
 
                                     <!-- Cover Zoom Preview Button -->
                                     <button type="button" class="admin-action-link" data-bs-toggle="modal" data-bs-target="#adminCoverZoomModal{{ $song->id }}" title="Inspect 3000 × 3000 px Cover Artwork">
-                                        <i class="fa-regular fa-image"></i>
+                                        <i class="fa-solid fa-magnifying-glass-plus"></i>
                                     </button>
 
                                     <!-- Edit Song Modal Trigger -->
@@ -1197,7 +1249,7 @@
                                             <span class="badge px-3 py-1.5 rounded-pill" style="background: rgba(0, 210, 170, 0.15); color: #00d2aa; border: 1px solid rgba(0, 210, 170, 0.35);">
                                                 Full 3000 &times; 3000 px High-Res Artwork
                                             </span>
-                                            <a href="{{ $song->cover_image_url }}" download="{{ Str::slug($song->title) }}-cover.jpg" target="_blank" class="btn btn-sm btn-exact-teal py-1.5 px-3 rounded-pill fw-bold">
+                                            <a href="{{ route('admin.songs.download_cover', $song->id) }}" class="btn btn-sm btn-exact-teal py-1.5 px-3 rounded-pill fw-bold">
                                                 <i class="fa-solid fa-download me-1"></i> Download Cover
                                             </a>
                                             <a href="{{ $song->cover_image_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-1.5 px-3 rounded-pill">

@@ -273,4 +273,39 @@ class VerificationDocumentUploadAndDisplayTest extends TestCase
         $this->get(route('admin.verification.download_signature', $verification->id))
             ->assertRedirect(route('login'));
     }
+
+    public function test_customer_can_upload_pan_and_signature_via_profile_info_modal(): void
+    {
+        Storage::fake('public');
+
+        $panFile = UploadedFile::fake()->image('profile_pan.jpg', 800, 600);
+        $sigFile = UploadedFile::fake()->image('profile_sig.png', 400, 200);
+
+        $response = $this->actingAs($this->customer)->post(route('customer.profile_info.store'), [
+            'owner_name' => 'Amit Sharma',
+            'channel_name' => 'Amit Beats Official',
+            'youtube_link' => 'https://youtube.com/@amitbeats',
+            'label_name' => 'Amit Records',
+            'pan_card_photo' => $panFile,
+            'signature_photo' => $sigFile,
+        ]);
+
+        $response->assertSessionHas('success');
+
+        $verification = Verification::where('user_id', $this->customer->id)->first();
+        $this->assertNotNull($verification, 'Verification should be created and linked to the customer account');
+        $this->assertNotNull($verification->pan_card_photo);
+        $this->assertNotNull($verification->signature_photo);
+
+        // Verify stored on public disk
+        Storage::disk('public')->assertExists($verification->pan_card_photo);
+        Storage::disk('public')->assertExists($verification->signature_photo);
+
+        // Admin can download the files uploaded via profile info
+        $panDownload = $this->actingAs($this->admin)->get(route('admin.verification.download_pan', $verification->id));
+        $panDownload->assertStatus(200);
+
+        $sigDownload = $this->actingAs($this->admin)->get(route('admin.verification.download_signature', $verification->id));
+        $sigDownload->assertStatus(200);
+    }
 }

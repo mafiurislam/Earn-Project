@@ -268,7 +268,7 @@
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                     </div>
-                    <form id="customerProfileInfoForm" action="{{ route('customer.profile_info.store') }}" method="POST" novalidate>
+                    <form id="customerProfileInfoForm" action="{{ route('customer.profile_info.store') }}" method="POST" enctype="multipart/form-data" novalidate>
                         @csrf
                         <div class="modal-body">
                             <div class="small mb-3 text-secondary" style="font-size: 0.85rem;">
@@ -335,6 +335,48 @@
                                        placeholder="Enter record label name" 
                                        required>
                                 <div class="invalid-feedback" id="feedback_label_name">Label Name is required.</div>
+                            </div>
+
+                            <!-- 5. Verification Documents (PAN Card & Signature) -->
+                            <div class="mb-3 pt-3" style="border-top: 1px dashed rgba(255, 255, 255, 0.1);">
+                                <label class="form-label text-light fw-bold small mb-1">
+                                    <i class="fa-solid fa-shield-halved text-teal me-1"></i> Customer Verification Documents (PAN &amp; Signature)
+                                </label>
+                                <div class="small text-secondary mb-2" style="font-size: 0.8rem;">
+                                    Upload your PAN Card and Signature to link with your individual customer account.
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-sm-6">
+                                        <label for="profile_pan_card" class="form-label text-secondary small mb-1">Upload PAN Card</label>
+                                        <input type="file" 
+                                               class="form-control form-control-dark" 
+                                               id="profile_pan_card" 
+                                               name="pan_card_photo" 
+                                               accept="image/*">
+                                        @if(Auth::user()->verification && Auth::user()->verification->pan_card_photo_url)
+                                            <div class="mt-1 small">
+                                                <a href="{{ Auth::user()->verification->pan_card_photo_url }}" target="_blank" class="text-teal text-decoration-none">
+                                                    <i class="fa-regular fa-image me-1"></i> View Current PAN
+                                                </a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="profile_signature" class="form-label text-secondary small mb-1">Upload Signature</label>
+                                        <input type="file" 
+                                               class="form-control form-control-dark" 
+                                               id="profile_signature" 
+                                               name="signature_photo" 
+                                               accept="image/*">
+                                        @if(Auth::user()->verification && Auth::user()->verification->signature_photo_url)
+                                            <div class="mt-1 small">
+                                                <a href="{{ Auth::user()->verification->signature_photo_url }}" target="_blank" class="text-info text-decoration-none">
+                                                    <i class="fa-regular fa-image me-1"></i> View Current Signature
+                                                </a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="p-2.5 rounded-3 d-flex align-items-center justify-content-between" style="background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(255, 255, 255, 0.1);">
@@ -508,7 +550,8 @@
                         }
                         submitBtn.innerHTML = origBtnHtml;
                         submitBtn.disabled = false;
-                    }, 500);
+                        window.location.reload();
+                    }, 600);
                 })
                 .catch(err => {
                     submitBtn.innerHTML = origBtnHtml;
