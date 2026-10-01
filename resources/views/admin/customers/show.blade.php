@@ -365,7 +365,7 @@
                                             </div>
                                             <audio controls class="w-100" style="height: 36px; border-radius: 6px;" preload="metadata" src="{{ $song->audio_file_url }}"></audio>
                                             <div class="d-flex justify-content-between small text-white" style="font-size: 0.72rem;">
-                                                <a href="{{ $song->audio_file_url }}" download target="_blank" class="text-decoration-none text-info fw-semibold">
+                                                <a href="{{ route('admin.songs.download', $song->id) }}" class="text-decoration-none text-info fw-semibold">
                                                     <i class="fa-solid fa-download me-1"></i> Download MP3
                                                 </a>
                                                 <span class="badge px-2 py-0.5 rounded-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">Active</span>
@@ -642,9 +642,19 @@
                         <!-- Document Photos -->
                         <div class="col-lg-6">
                             <div class="p-4 rounded-4 h-100" style="background: #111a2e; border: 1px solid rgba(255, 255, 255, 0.08);">
-                                <h6 class="fw-bold text-info text-uppercase small mb-3">Uploaded Verification Documents</h6>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h6 class="fw-bold text-info text-uppercase small mb-0">
+                                        <i class="fa-solid fa-shield-halved text-teal me-1.5"></i> Uploaded Verification Documents
+                                    </h6>
+                                    @if($customer->verification && ($customer->verification->pan_card_photo || $customer->verification->signature_photo))
+                                        <span class="badge py-1 px-2.5 rounded-pill" style="background: rgba(0, 210, 170, 0.15); color: #00d2aa; border: 1px solid rgba(0, 210, 170, 0.3); font-size: 0.72rem;">
+                                            <i class="fa-solid fa-file-shield me-1"></i> Documents Attached
+                                        </span>
+                                    @endif
+                                </div>
                                 
                                 <div class="row g-3">
+                                    <!-- PAN Card Image & Download -->
                                     <div class="col-sm-6 text-center">
                                         <div class="small fw-semibold text-secondary mb-2">PAN Card Image</div>
                                         <div class="p-2 border border-secondary border-opacity-25 rounded-3 bg-black">
@@ -652,16 +662,24 @@
                                                 <a href="{{ $customer->verification->pan_card_photo_url }}" target="_blank" title="Click to view full PAN Card">
                                                     <img src="{{ $customer->verification->pan_card_photo_url }}" alt="PAN Card: {{ $customer->name }}" class="img-fluid rounded" style="max-height: 180px; width: 100%; object-fit: contain;">
                                                 </a>
-                                                <div class="mt-2 text-center">
-                                                    <a href="{{ $customer->verification->pan_card_photo_url }}" target="_blank" class="small text-teal text-decoration-none" style="font-size: 0.78rem;">
-                                                        <i class="fa-solid fa-up-right-from-square me-1"></i> Open Full Image
+                                                <div class="mt-2.5 d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                                    <a href="{{ route('admin.verification.download_pan', $customer->verification->id) }}" class="btn btn-sm btn-exact-teal py-1.5 px-3 rounded-pill fw-bold" title="Download {{ $customer->name }}'s PAN Card">
+                                                        <i class="fa-solid fa-download me-1"></i> Download PAN
+                                                    </a>
+                                                    <a href="{{ $customer->verification->pan_card_photo_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-1.5 px-2.5 rounded-pill small text-teal" title="Open PAN Card in full screen">
+                                                        <i class="fa-solid fa-up-right-from-square me-1"></i> Open
                                                     </a>
                                                 </div>
                                             @else
-                                                <span class="text-secondary small d-block py-4">No document uploaded</span>
+                                                <div class="py-4 text-secondary small">
+                                                    <i class="fa-regular fa-id-card fs-2 d-block mb-1 text-teal opacity-40"></i>
+                                                    No PAN card uploaded
+                                                </div>
                                             @endif
                                         </div>
                                     </div>
+
+                                    <!-- Signature Photo & Download -->
                                     <div class="col-sm-6 text-center">
                                         <div class="small fw-semibold text-secondary mb-2">Signature Photo</div>
                                         <div class="p-2 border border-secondary border-opacity-25 rounded-3 bg-black">
@@ -669,13 +687,19 @@
                                                 <a href="{{ $customer->verification->signature_photo_url }}" target="_blank" title="Click to view full Signature">
                                                     <img src="{{ $customer->verification->signature_photo_url }}" alt="Signature: {{ $customer->name }}" class="img-fluid rounded" style="max-height: 180px; width: 100%; object-fit: contain;">
                                                 </a>
-                                                <div class="mt-2 text-center">
-                                                    <a href="{{ $customer->verification->signature_photo_url }}" target="_blank" class="small text-info text-decoration-none" style="font-size: 0.78rem;">
-                                                        <i class="fa-solid fa-up-right-from-square me-1"></i> Open Full Image
+                                                <div class="mt-2.5 d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                                    <a href="{{ route('admin.verification.download_signature', $customer->verification->id) }}" class="btn btn-sm btn-exact-teal py-1.5 px-3 rounded-pill fw-bold" style="background: linear-gradient(135deg, #0284c7, #0ea5e9); border-color: #38bdf8;" title="Download {{ $customer->name }}'s Signature">
+                                                        <i class="fa-solid fa-download me-1"></i> Download Signature
+                                                    </a>
+                                                    <a href="{{ $customer->verification->signature_photo_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-1.5 px-2.5 rounded-pill small text-info" title="Open Signature in full screen">
+                                                        <i class="fa-solid fa-up-right-from-square me-1"></i> Open
                                                     </a>
                                                 </div>
                                             @else
-                                                <span class="text-secondary small d-block py-4">No document uploaded</span>
+                                                <div class="py-4 text-secondary small">
+                                                    <i class="fa-solid fa-signature fs-2 d-block mb-1 text-info opacity-40"></i>
+                                                    No signature uploaded
+                                                </div>
                                             @endif
                                         </div>
                                     </div>
@@ -815,6 +839,73 @@
                                     </span>
                                 @endif
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Uploaded Verification Documents (PAN Card & Signature) -->
+                    <div class="col-md-12">
+                        <div class="p-3.5 rounded-3 h-100" style="background: #111a2e; border: 1px solid rgba(255, 255, 255, 0.08);">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="small text-secondary text-uppercase fw-semibold" style="font-size: 0.74rem; letter-spacing: 0.5px;">
+                                    <i class="fa-solid fa-shield-halved text-teal me-1.5"></i> Customer Verification Documents (PAN &amp; Signature)
+                                </div>
+                                @if($customer->verification)
+                                    <span class="badge py-1 px-2.5 rounded-pill {{ $customer->verification->status === 'approved' ? 'badge-approved' : ($customer->verification->status === 'rejected' ? 'badge-rejected' : 'badge-pending') }}" style="font-size: 0.72rem;">
+                                        {{ strtoupper($customer->verification->status) }}
+                                    </span>
+                                @else
+                                    <span class="badge badge-unverified py-1 px-2.5 rounded-pill" style="font-size: 0.72rem;">UNVERIFIED</span>
+                                @endif
+                            </div>
+
+                            @if($customer->verification && ($customer->verification->pan_card_photo_url || $customer->verification->signature_photo_url))
+                                <div class="row g-3">
+                                    <div class="col-sm-6 text-center">
+                                        <div class="small fw-semibold text-secondary mb-1" style="font-size: 0.76rem;">PAN Card</div>
+                                        <div class="p-2 border border-secondary border-opacity-25 rounded-3 bg-black">
+                                            @if($customer->verification->pan_card_photo_url)
+                                                <a href="{{ $customer->verification->pan_card_photo_url }}" target="_blank" title="Click to view full PAN Card">
+                                                    <img src="{{ $customer->verification->pan_card_photo_url }}" alt="PAN Card: {{ $customer->name }}" class="img-fluid rounded" style="max-height: 140px; width: 100%; object-fit: contain;">
+                                                </a>
+                                                <div class="mt-2 d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                                    <a href="{{ route('admin.verification.download_pan', $customer->verification->id) }}" class="btn btn-sm btn-exact-teal py-1 px-2.5 rounded-pill fw-bold" style="font-size: 0.74rem;">
+                                                        <i class="fa-solid fa-download me-1"></i> Download PAN
+                                                    </a>
+                                                    <a href="{{ $customer->verification->pan_card_photo_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-1 px-2 rounded-pill small text-teal" style="font-size: 0.74rem;">
+                                                        <i class="fa-solid fa-up-right-from-square me-1"></i> Open
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <span class="text-secondary small d-block py-3">No PAN card uploaded</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 text-center">
+                                        <div class="small fw-semibold text-secondary mb-1" style="font-size: 0.76rem;">Signature</div>
+                                        <div class="p-2 border border-secondary border-opacity-25 rounded-3 bg-black">
+                                            @if($customer->verification->signature_photo_url)
+                                                <a href="{{ $customer->verification->signature_photo_url }}" target="_blank" title="Click to view full Signature">
+                                                    <img src="{{ $customer->verification->signature_photo_url }}" alt="Signature: {{ $customer->name }}" class="img-fluid rounded" style="max-height: 140px; width: 100%; object-fit: contain;">
+                                                </a>
+                                                <div class="mt-2 d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                                    <a href="{{ route('admin.verification.download_signature', $customer->verification->id) }}" class="btn btn-sm btn-exact-teal py-1 px-2.5 rounded-pill fw-bold" style="background: linear-gradient(135deg, #0284c7, #0ea5e9); border-color: #38bdf8; font-size: 0.74rem;">
+                                                        <i class="fa-solid fa-download me-1"></i> Download Signature
+                                                    </a>
+                                                    <a href="{{ $customer->verification->signature_photo_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-1 px-2 rounded-pill small text-info" style="font-size: 0.74rem;">
+                                                        <i class="fa-solid fa-up-right-from-square me-1"></i> Open
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <span class="text-secondary small d-block py-3">No signature uploaded</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="text-secondary small py-2 text-center">
+                                    <i class="fa-regular fa-folder-open me-1 opacity-50"></i> No verification documents uploaded yet.
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

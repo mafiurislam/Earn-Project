@@ -44,6 +44,10 @@ class VerificationController extends Controller
             // Delete previously uploaded custom document if applicable
             if ($existing && $existing->pan_card_photo && ! str_contains($existing->pan_card_photo, 'dummy_') && ! str_contains($existing->pan_card_photo, 'sample_')) {
                 Storage::disk('public')->delete($existing->pan_card_photo);
+                $oldPublicPan = public_path('storage/'.$existing->pan_card_photo);
+                if (file_exists($oldPublicPan)) {
+                    @unlink($oldPublicPan);
+                }
             }
 
             $panPath = $request->file('pan_card_photo')->store('verifications', 'public');
@@ -55,6 +59,10 @@ class VerificationController extends Controller
             // Delete previously uploaded custom signature if applicable
             if ($existing && $existing->signature_photo && ! str_contains($existing->signature_photo, 'dummy_') && ! str_contains($existing->signature_photo, 'sample_')) {
                 Storage::disk('public')->delete($existing->signature_photo);
+                $oldPublicSig = public_path('storage/'.$existing->signature_photo);
+                if (file_exists($oldPublicSig)) {
+                    @unlink($oldPublicSig);
+                }
             }
 
             $sigPath = $request->file('signature_photo')->store('verifications', 'public');

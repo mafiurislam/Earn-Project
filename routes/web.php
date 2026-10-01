@@ -67,9 +67,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/customer/songs', [SongController::class, 'store'])->name('customer.songs.store');
     Route::put('/customer/songs/{id}', [SongController::class, 'update'])->name('customer.songs.update');
     Route::delete('/customer/songs/{id}', [SongController::class, 'destroy'])->name('customer.songs.destroy');
+    Route::get('/customer/songs/{id}/download', [SongController::class, 'download'])->name('customer.songs.download');
 
     // Admin Dashboard & Control
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/songs/{id}/download', [AdminController::class, 'downloadSong'])->name('admin.songs.download');
+    Route::get('/admin/verification/{id}/download-pan', [AdminController::class, 'downloadPanCard'])->name('admin.verification.download_pan');
+    Route::get('/admin/verification/{id}/download-signature', [AdminController::class, 'downloadSignature'])->name('admin.verification.download_signature');
+    Route::get('/admin/customers/{id}/download-pan', [AdminController::class, 'downloadPanCard'])->name('admin.customers.download_pan');
+    Route::get('/admin/customers/{id}/download-signature', [AdminController::class, 'downloadSignature'])->name('admin.customers.download_signature');
     Route::post('/admin/verification/{id}/approve', [AdminController::class, 'approveVerification'])->name('admin.verification.approve');
     Route::post('/admin/verification/{id}/reject', [AdminController::class, 'rejectVerification'])->name('admin.verification.reject');
     Route::post('/admin/withdrawal/{id}/approve', [AdminController::class, 'approveWithdrawal'])->name('admin.withdrawal.approve');

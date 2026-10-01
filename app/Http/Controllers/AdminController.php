@@ -9,6 +9,8 @@ use App\Models\Verification;
 use App\Models\Withdrawal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -51,6 +53,24 @@ class AdminController extends Controller
                 ELSE 5 END, id ASC")
             ->paginate(20, ['*'], 'customers_page');
 
+        // All uploaded songs across all customers for Main Admin Dashboard
+        $songSearch = $request->input('song_search');
+        $songQuery = Song::with('user')->latest();
+        if (! empty($songSearch)) {
+            $songQuery->where(function ($q) use ($songSearch) {
+                $q->where('title', 'like', "%{$songSearch}%")
+                    ->orWhere('singer', 'like', "%{$songSearch}%")
+                    ->orWhere('composer', 'like', "%{$songSearch}%")
+                    ->orWhere('producer', 'like', "%{$songSearch}%")
+                    ->orWhereHas('user', function ($uq) use ($songSearch) {
+                        $uq->where('name', 'like', "%{$songSearch}%")
+                            ->orWhere('email', 'like', "%{$songSearch}%")
+                            ->orWhere('username', 'like', "%{$songSearch}%");
+                    });
+            });
+        }
+        $allSongs = $songQuery->paginate(15, ['*'], 'songs_page');
+
         $pendingVerifications = Verification::where('status', 'pending')
             ->with('user')
             ->latest()
@@ -79,6 +99,8 @@ class AdminController extends Controller
         return view('admin.dashboard', compact(
             'stats',
             'users',
+            'allSongs',
+            'songSearch',
             'pendingVerifications',
             'pendingWithdrawals',
             'allWithdrawals',
@@ -87,6 +109,125 @@ class AdminController extends Controller
             'search',
             'withdrawalStatus'
         ));
+    }
+
+    /**
+     * Admin download customer's uploaded MP3 song file.
+     */
+    public function downloadSong($id)
+    {
+        $song = Song::with('user')->findOrFail($id);
+
+        $filePath = null;
+        if (Storage::disk('public')->exists($song->audio_file)) {
+            $filePath = Storage::disk('public')->path($song->audio_file);
+        } elseif (file_exists(storage_path('app/public/'.$song->audio_file))) {
+            $filePath = storage_path('app/public/'.$song->audio_file);
+        } elseif (file_exists(public_path('storage/'.$song->audio_file))) {
+            $filePath = public_path('storage/'.$song->audio_file);
+        }
+
+        if (! $filePath || ! file_exists($filePath)) {
+            abort(404, 'MP3 audio file not found on server.');
+        }
+
+        $downloadName = Str::slug($song->title ?: 'song').'.mp3';
+
+        return response()->download($filePath, $downloadName, [
+            'Content-Type' => 'audio/mpeg',
+        ]);
+    }
+
+    /**
+     * Admin download customer's uploaded PAN Card document.
+     */
+    public function downloadPanCard($id)
+    {
+        if (! Auth::user()?->is_admin) {
+            abort(403, 'Unauthorized access to customer KYC documents.');
+        }
+
+        $verification = Verification::with('user')->find($id);
+        if (! $verification) {
+            $verification = Verification::with('user')->where('user_id', $id)->first();
+        }
+
+        if (! $verification) {
+            abort(404, 'No verification record found.');
+        }
+
+        if (empty($verification->pan_card_photo)) {
+            abort(404, 'No PAN card document on record.');
+        }
+
+        $clean = ltrim(str_replace('storage/', '', $verification->pan_card_photo), '/\\');
+        $filePath = null;
+
+        if (Storage::disk('public')->exists($clean)) {
+            $filePath = Storage::disk('public')->path($clean);
+        } elseif (file_exists(storage_path('app/public/'.$clean))) {
+            $filePath = storage_path('app/public/'.$clean);
+        } elseif (file_exists(public_path('storage/'.$clean))) {
+            $filePath = public_path('storage/'.$clean);
+        } elseif (file_exists(public_path('images/'.basename($clean)))) {
+            $filePath = public_path('images/'.basename($clean));
+        }
+
+        if (! $filePath || ! file_exists($filePath)) {
+            abort(404, 'PAN card file not found on server.');
+        }
+
+        $ext = pathinfo($filePath, PATHINFO_EXTENSION) ?: 'jpg';
+        $customerSlug = Str::slug($verification->user?->name ?: $verification->full_name ?: 'customer');
+        $downloadName = "{$customerSlug}-pan-card.{$ext}";
+
+        return response()->download($filePath, $downloadName);
+    }
+
+    /**
+     * Admin download customer's uploaded Signature document.
+     */
+    public function downloadSignature($id)
+    {
+        if (! Auth::user()?->is_admin) {
+            abort(403, 'Unauthorized access to customer KYC documents.');
+        }
+
+        $verification = Verification::with('user')->find($id);
+        if (! $verification) {
+            $verification = Verification::with('user')->where('user_id', $id)->first();
+        }
+
+        if (! $verification) {
+            abort(404, 'No verification record found.');
+        }
+
+        if (empty($verification->signature_photo)) {
+            abort(404, 'No signature document on record.');
+        }
+
+        $clean = ltrim(str_replace('storage/', '', $verification->signature_photo), '/\\');
+        $filePath = null;
+
+        if (Storage::disk('public')->exists($clean)) {
+            $filePath = Storage::disk('public')->path($clean);
+        } elseif (file_exists(storage_path('app/public/'.$clean))) {
+            $filePath = storage_path('app/public/'.$clean);
+        } elseif (file_exists(public_path('storage/'.$clean))) {
+            $filePath = public_path('storage/'.$clean);
+        } elseif (file_exists(public_path('images/'.basename($clean)))) {
+            $filePath = public_path('images/'.basename($clean));
+        }
+
+        if (! $filePath || ! file_exists($filePath)) {
+            abort(404, 'Signature file not found on server.');
+        }
+
+        $ext = pathinfo($filePath, PATHINFO_EXTENSION) ?: 'jpg';
+        $customerSlug = Str::slug($verification->user?->name ?: $verification->full_name ?: 'customer');
+        $downloadName = "{$customerSlug}-signature.{$ext}";
+
+        return response()->download($filePath, $downloadName);
     }
 
     public function increaseEarnings(Request $request, $id)

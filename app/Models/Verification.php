@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class Verification extends Model
@@ -27,6 +28,32 @@ class Verification extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Ensure a storage file is synchronized to public/storage for non-symlink/shared hosting environments.
+     */
+    public static function syncToPublic(?string $relativePath): void
+    {
+        if (empty($relativePath)) {
+            return;
+        }
+
+        try {
+            $clean = ltrim(str_replace('storage/', '', $relativePath), '/\\');
+            $source = storage_path('app/public/'.$clean);
+            $destination = public_path('storage/'.$clean);
+
+            if (file_exists($source) && ! file_exists($destination)) {
+                $dir = dirname($destination);
+                if (! File::isDirectory($dir)) {
+                    File::makeDirectory($dir, 0755, true, true);
+                }
+                File::copy($source, $destination);
+            }
+        } catch (\Throwable $e) {
+            // Non-critical fallback
+        }
     }
 
     /**
@@ -61,6 +88,8 @@ class Verification extends Model
             if (str_starts_with($clean, 'storage/')) {
                 $clean = substr($clean, 8);
             }
+
+            self::syncToPublic($clean);
 
             // Check if file exists in Storage or on disk
             if (Storage::disk('public')->exists($clean) || file_exists(storage_path('app/public/'.$clean)) || file_exists(public_path('storage/'.$clean))) {

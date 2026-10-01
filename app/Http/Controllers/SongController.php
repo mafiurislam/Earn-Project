@@ -43,6 +43,8 @@ class SongController extends Controller
 
         $coverPath = $this->processAndStoreCover($request->file('cover_image'));
         $audioPath = $request->file('audio_file')->store('songs/audio', 'public');
+        Song::syncToPublic($coverPath);
+        Song::syncToPublic($audioPath);
 
         $song = Song::create([
             'user_id' => Auth::id(),
@@ -84,19 +86,15 @@ class SongController extends Controller
         }
 
         if ($request->hasFile('cover_image')) {
-            // Delete old cover image
-            if ($song->cover_image && Storage::disk('public')->exists($song->cover_image)) {
-                Storage::disk('public')->delete($song->cover_image);
-            }
+            Song::deleteStorageFile($song->cover_image);
             $song->cover_image = $this->processAndStoreCover($request->file('cover_image'));
+            Song::syncToPublic($song->cover_image);
         }
 
         if ($request->hasFile('audio_file')) {
-            // Delete old audio file
-            if ($song->audio_file && Storage::disk('public')->exists($song->audio_file)) {
-                Storage::disk('public')->delete($song->audio_file);
-            }
+            Song::deleteStorageFile($song->audio_file);
             $song->audio_file = $request->file('audio_file')->store('songs/audio', 'public');
+            Song::syncToPublic($song->audio_file);
         }
 
         $song->save();
@@ -113,12 +111,8 @@ class SongController extends Controller
         $title = $song->title;
 
         // Clean up storage files
-        if ($song->cover_image && Storage::disk('public')->exists($song->cover_image)) {
-            Storage::disk('public')->delete($song->cover_image);
-        }
-        if ($song->audio_file && Storage::disk('public')->exists($song->audio_file)) {
-            Storage::disk('public')->delete($song->audio_file);
-        }
+        Song::deleteStorageFile($song->cover_image);
+        Song::deleteStorageFile($song->audio_file);
 
         $song->delete();
 
@@ -126,10 +120,44 @@ class SongController extends Controller
     }
 
     /**
+     * Download the exact customer uploaded MP3 audio file.
+     */
+    public function download($id)
+    {
+        $song = Song::with('user')->findOrFail($id);
+
+        // Security check: only admin or the song owner can download
+        if (! Auth::user()->is_admin && $song->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized access to this audio file.');
+        }
+
+        $filePath = null;
+        if (Storage::disk('public')->exists($song->audio_file)) {
+            $filePath = Storage::disk('public')->path($song->audio_file);
+        } elseif (file_exists(storage_path('app/public/'.$song->audio_file))) {
+            $filePath = storage_path('app/public/'.$song->audio_file);
+        } elseif (file_exists(public_path('storage/'.$song->audio_file))) {
+            $filePath = public_path('storage/'.$song->audio_file);
+        }
+
+        if (! $filePath || ! file_exists($filePath)) {
+            abort(404, 'Audio file not found on server.');
+        }
+
+        $downloadName = Str::slug($song->title ?: 'song').'.mp3';
+
+        return response()->download($filePath, $downloadName, [
+            'Content-Type' => 'audio/mpeg',
+        ]);
+    }
+
+    /**
      * Process cover image and ensure 3000x3000px dimensions using GD, then store in storage/app/public/songs/covers
      */
     public function processAndStoreCover($file): string
     {
+        @ini_set('memory_limit', '256M');
+
         $filename = 'songs/covers/'.Str::random(40).'.jpg';
 
         $imageContent = file_get_contents($file->getRealPath());
@@ -164,11 +192,15 @@ class SongController extends Controller
             imagedestroy($src);
 
             Storage::disk('public')->put($filename, $streamData);
+            Song::syncToPublic($filename);
 
             return $filename;
         }
 
         // Fallback: normal Laravel store if GD fails to parse
-        return $file->store('songs/covers', 'public');
+        $fallbackPath = $file->store('songs/covers', 'public');
+        Song::syncToPublic($fallbackPath);
+
+        return $fallbackPath;
     }
 }

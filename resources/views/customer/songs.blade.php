@@ -193,7 +193,10 @@
                             </div>
 
                             <!-- Actions -->
-                            <div class="col-12 col-md-auto ms-md-auto text-end">
+                            <div class="col-12 col-md-auto ms-md-auto text-end d-flex flex-wrap align-items-center justify-content-end gap-2">
+                                <a href="{{ route('customer.songs.download', $song->id) }}" class="btn btn-sm btn-exact-teal py-1.5 px-3 rounded-pill small fw-semibold" title="Download exact MP3 song file">
+                                    <i class="fa-solid fa-download me-1"></i> Download MP3
+                                </a>
                                 <button type="button" class="btn btn-sm btn-dark-outline py-1.5 px-3 rounded-pill small fw-semibold text-info" style="border-color: rgba(56, 189, 248, 0.3);" data-bs-toggle="modal" data-bs-target="#editSongModal{{ $song->id }}">
                                     <i class="fa-regular fa-pen-to-square me-1"></i> Edit
                                 </button>

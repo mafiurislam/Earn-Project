@@ -337,4 +337,83 @@ class SongManagementTest extends TestCase
         $response->assertRedirect(route('admin.dashboard'));
         $this->assertDatabaseMissing('users', ['id' => $this->customer->id]);
     }
+
+    public function test_uploaded_song_and_cover_and_mp3_download_display_on_main_admin_dashboard(): void
+    {
+        $coverFile = UploadedFile::fake()->image('cover3000.jpg', 3000, 3000);
+        $audioFile = UploadedFile::fake()->create('kesariya.mp3', 4500, 'audio/mpeg');
+
+        // Customer uploads 3000x3000px cover image and MP3 song
+        $uploadResponse = $this->actingAs($this->customer)
+            ->post(route('customer.songs.store'), [
+                'title' => 'Kesariya Tera',
+                'singer' => 'Arijit Singh, Pritam',
+                'composer' => 'Pritam Chakraborty',
+                'producer' => 'Dharma Records',
+                'copyright' => '℗ 2026 Rajdoot Nivedan',
+                'cover_image' => $coverFile,
+                'audio_file' => $audioFile,
+            ]);
+
+        $uploadResponse->assertSessionHas('success');
+
+        $song = Song::where('title', 'Kesariya Tera')->first();
+        $this->assertNotNull($song);
+        $this->assertSame($this->customer->id, $song->user_id);
+        $this->assertTrue(Storage::disk('public')->exists($song->cover_image));
+        $this->assertTrue(Storage::disk('public')->exists($song->audio_file));
+
+        // Admin accesses Main Admin Dashboard
+        $adminDashboardResponse = $this->actingAs($this->admin)
+            ->get(route('admin.dashboard'));
+
+        $adminDashboardResponse->assertOk();
+
+        // 1. Cover artwork & song details displayed on Main Admin Dashboard
+        $adminDashboardResponse->assertSee('Customer uploaded songs &amp; audio catalog', false);
+        $adminDashboardResponse->assertSee('Kesariya Tera');
+        $adminDashboardResponse->assertSee('Arijit Singh, Pritam');
+        $adminDashboardResponse->assertSee('Pritam Chakraborty');
+        $adminDashboardResponse->assertSee('Dharma Records');
+        $adminDashboardResponse->assertSee('℗ 2026 Rajdoot Nivedan');
+        $adminDashboardResponse->assertSee($this->customer->name);
+        $adminDashboardResponse->assertSee($song->cover_image_url);
+
+        // 2. Working Download MP3 button is present
+        $adminDashboardResponse->assertSee(route('admin.songs.download', $song->id));
+        $adminDashboardResponse->assertSee('Download MP3');
+
+        // 3. Admin downloads the exact uploaded MP3 file
+        $downloadResponse = $this->actingAs($this->admin)
+            ->get(route('admin.songs.download', $song->id));
+
+        $downloadResponse->assertOk();
+        $downloadResponse->assertHeader('content-type', 'audio/mpeg');
+        $this->assertStringContainsString('kesariya-tera.mp3', $downloadResponse->headers->get('content-disposition'));
+    }
+
+    public function test_customer_can_download_their_own_song(): void
+    {
+        $coverFile = UploadedFile::fake()->image('cover.jpg', 3000, 3000);
+        $audioFile = UploadedFile::fake()->create('track.mp3', 3000, 'audio/mpeg');
+
+        $this->actingAs($this->customer)
+            ->post(route('customer.songs.store'), [
+                'title' => 'Customer Download Test Song',
+                'singer' => 'Singer A',
+                'composer' => 'Composer A',
+                'producer' => 'Producer A',
+                'cover_image' => $coverFile,
+                'audio_file' => $audioFile,
+            ]);
+
+        $song = Song::where('title', 'Customer Download Test Song')->first();
+        $this->assertNotNull($song);
+
+        $downloadResponse = $this->actingAs($this->customer)
+            ->get(route('customer.songs.download', $song->id));
+
+        $downloadResponse->assertOk();
+        $downloadResponse->assertHeader('content-type', 'audio/mpeg');
+    }
 }

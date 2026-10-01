@@ -23,7 +23,7 @@
     <div class="row g-3 mb-3">
         
         <!-- 1. CUSTOMERS -->
-        <div class="col-sm-6 col-lg-3">
+        <div class="col-6 col-md-4 col-xl">
             <div class="exact-stat-card">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.5px; color: #94a3b8; text-transform: uppercase;">
@@ -37,8 +37,23 @@
             </div>
         </div>
 
-        <!-- 2. PENDING KYC -->
-        <div class="col-sm-6 col-lg-3">
+        <!-- 2. UPLOADED SONGS -->
+        <div class="col-6 col-md-4 col-xl">
+            <div class="exact-stat-card">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.5px; color: #94a3b8; text-transform: uppercase;">
+                        UPLOADED SONGS
+                    </span>
+                    <i class="fa-solid fa-compact-disc" style="color: #38bdf8; font-size: 1rem;"></i>
+                </div>
+                <div class="fs-2 fw-extrabold" style="color: #38bdf8;">
+                    {{ $stats['total_songs'] }}
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. PENDING KYC -->
+        <div class="col-6 col-md-4 col-xl">
             <div class="exact-stat-card">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.5px; color: #94a3b8; text-transform: uppercase;">
@@ -52,8 +67,8 @@
             </div>
         </div>
 
-        <!-- 3. PENDING WITHDRAWALS -->
-        <div class="col-sm-6 col-lg-3">
+        <!-- 4. PENDING WITHDRAWALS -->
+        <div class="col-6 col-md-4 col-xl">
             <div class="exact-stat-card">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.5px; color: #94a3b8; text-transform: uppercase;">
@@ -67,8 +82,8 @@
             </div>
         </div>
 
-        <!-- 4. TOTAL PAID OUT -->
-        <div class="col-sm-6 col-lg-3">
+        <!-- 5. TOTAL PAID OUT -->
+        <div class="col-6 col-md-4 col-xl">
             <div class="exact-stat-card">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.5px; color: #94a3b8; text-transform: uppercase;">
@@ -304,9 +319,12 @@
                                             <a href="{{ $v->pan_card_photo_url }}" target="_blank" title="Click to view full PAN Card">
                                                 <img src="{{ $v->pan_card_photo_url }}" alt="PAN Card: {{ $v->full_name }}" class="img-fluid rounded" style="max-height: 260px; width: 100%; object-fit: contain;">
                                             </a>
-                                            <div class="mt-2 text-center">
-                                                <a href="{{ $v->pan_card_photo_url }}" target="_blank" class="small text-teal text-decoration-none" style="font-size: 0.78rem;">
-                                                    <i class="fa-solid fa-up-right-from-square me-1"></i> Open Full Image
+                                            <div class="mt-2.5 d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                                <a href="{{ route('admin.verification.download_pan', $v->id) }}" class="btn btn-sm btn-exact-teal py-1.5 px-3 rounded-pill fw-bold">
+                                                    <i class="fa-solid fa-download me-1"></i> Download PAN
+                                                </a>
+                                                <a href="{{ $v->pan_card_photo_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-1.5 px-2.5 rounded-pill small text-teal">
+                                                    <i class="fa-solid fa-up-right-from-square me-1"></i> Open
                                                 </a>
                                             </div>
                                         @else
@@ -324,9 +342,12 @@
                                             <a href="{{ $v->signature_photo_url }}" target="_blank" title="Click to view full Signature">
                                                 <img src="{{ $v->signature_photo_url }}" alt="Signature: {{ $v->full_name }}" class="img-fluid rounded" style="max-height: 260px; width: 100%; object-fit: contain;">
                                             </a>
-                                            <div class="mt-2 text-center">
-                                                <a href="{{ $v->signature_photo_url }}" target="_blank" class="small text-info text-decoration-none" style="font-size: 0.78rem;">
-                                                    <i class="fa-solid fa-up-right-from-square me-1"></i> Open Full Image
+                                            <div class="mt-2.5 d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                                <a href="{{ route('admin.verification.download_signature', $v->id) }}" class="btn btn-sm btn-exact-teal py-1.5 px-3 rounded-pill fw-bold" style="background: linear-gradient(135deg, #0284c7, #0ea5e9); border-color: #38bdf8;">
+                                                    <i class="fa-solid fa-download me-1"></i> Download Signature
+                                                </a>
+                                                <a href="{{ $v->signature_photo_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-1.5 px-2.5 rounded-pill small text-info">
+                                                    <i class="fa-solid fa-up-right-from-square me-1"></i> Open
                                                 </a>
                                             </div>
                                         @else
@@ -415,7 +436,7 @@
                                     <div>
                                         <div class="fw-bold text-light" style="font-size: 0.88rem;">{{ $user->name }}</div>
                                         <div class="small" style="color: #94a3b8; font-size: 0.78rem;">{{ $user->email }}</div>
-                                        <div class="mt-1" style="font-size: 0.75rem;">
+                                        <div class="mt-1 d-flex align-items-center gap-2 flex-wrap" style="font-size: 0.75rem;">
                                             @if($user->autocart_generator_enabled)
                                                 <span class="fw-bold text-success" style="color: #10b981 !important;">
                                                     <i class="fa-solid fa-circle" style="font-size: 6px; vertical-align: middle; margin-right: 3px;"></i> Autocart Generator is ON
@@ -425,6 +446,9 @@
                                                     <i class="fa-solid fa-circle" style="font-size: 6px; vertical-align: middle; margin-right: 3px;"></i> Autocart Generator is OFF
                                                 </span>
                                             @endif
+                                            <span class="badge px-2 py-0.5 rounded-pill" style="background: rgba(0, 210, 170, 0.12); color: #00d2aa; border: 1px solid rgba(0, 210, 170, 0.25); font-size: 0.72rem;">
+                                                <i class="fa-solid fa-compact-disc me-1"></i> {{ $user->songs->count() }} {{ $user->songs->count() === 1 ? 'Track' : 'Tracks' }}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -437,16 +461,24 @@
                                 </span>
                             </td>
 
-                            <!-- KYC Badge -->
+                            <!-- KYC Badge (Clickable to view & download KYC documents) -->
                             <td>
                                 @if($user->isVerified())
-                                    <span class="badge-approved">verified</span>
+                                    <span class="badge-approved" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#adminCustomerKycModal{{ $user->id }}" title="Click to view & download verified KYC documents">
+                                        <i class="fa-solid fa-shield-check me-0.5"></i> verified
+                                    </span>
                                 @elseif($user->verification && $user->verification->status === 'pending')
-                                    <span class="badge-pending">pending</span>
+                                    <span class="badge-pending" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#adminCustomerKycModal{{ $user->id }}" title="Click to review & download pending KYC documents">
+                                        <i class="fa-solid fa-clock me-0.5"></i> pending
+                                    </span>
                                 @elseif($user->verification && $user->verification->status === 'rejected')
-                                    <span class="badge-rejected">rejected</span>
+                                    <span class="badge-rejected" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#adminCustomerKycModal{{ $user->id }}" title="Click to view rejected KYC details">
+                                        <i class="fa-solid fa-circle-xmark me-0.5"></i> rejected
+                                    </span>
                                 @else
-                                    <span class="badge-unverified">unverified</span>
+                                    <span class="badge-unverified" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#adminCustomerKycModal{{ $user->id }}" title="Click to check KYC status">
+                                        unverified
+                                    </span>
                                 @endif
                             </td>
 
@@ -455,7 +487,7 @@
                                 ₹{{ number_format($user->withdrawn_amount, 0) }}
                             </td>
 
-                            <!-- Actions: [✏️ Earnings] [🪪 Profile Info] [👁️ View] -->
+                            <!-- Actions: [✏️ Earnings] [🪪 Profile Info] [🛡️ KYC Docs] [👁️ View] -->
                             <td class="text-end">
                                 <div class="d-inline-flex align-items-center gap-2">
                                     <!-- Earnings Modal Trigger -->
@@ -465,7 +497,7 @@
 
                                     <!-- View Profile Info Modal Trigger -->
                                     <button type="button" class="admin-action-link" data-bs-toggle="modal" data-bs-target="#viewProfileInfoModal{{ $user->id }}" title="View Profile Info for {{ $user->name }}">
-                                        <i class="fa-solid fa-id-card"></i> View Profile Info
+                                        <i class="fa-solid fa-id-card"></i> Profile Info
                                         @if($user->isProfileComplete())
                                             <span class="profile-status-dot dot-green ms-1" title="Profile Complete (Green)"></span>
                                         @else
@@ -473,9 +505,17 @@
                                         @endif
                                     </button>
 
+                                    <!-- View Customer KYC Documents Modal Trigger -->
+                                    <button type="button" class="admin-action-link" data-bs-toggle="modal" data-bs-target="#adminCustomerKycModal{{ $user->id }}" title="View & Download KYC Documents (PAN & Signature) for {{ $user->name }}">
+                                        <i class="fa-solid fa-shield-halved text-teal"></i> KYC Docs
+                                        @if($user->verification && ($user->verification->pan_card_photo || $user->verification->signature_photo))
+                                            <span class="badge bg-success rounded-pill ms-0.5 p-1" style="width: 7px; height: 7px; display: inline-block; vertical-align: middle;"></span>
+                                        @endif
+                                    </button>
+
                                     <!-- View Individual Customer Profile Link -->
                                     <a href="{{ route('admin.customers.show', $user->id) }}" class="admin-action-link" title="Open full customer profile & manage songs">
-                                        <i class="fa-regular fa-eye"></i> View
+                                        <i class="fa-regular fa-eye"></i> View Profile
                                     </a>
                                 </div>
                             </td>
@@ -724,9 +764,14 @@
                                                                     <a href="{{ $user->verification->pan_card_photo_url }}" target="_blank" title="Click to view full PAN Card">
                                                                         <img src="{{ $user->verification->pan_card_photo_url }}" alt="PAN Card: {{ $user->name }}" class="img-fluid rounded" style="max-height: 120px; width: 100%; object-fit: contain;">
                                                                     </a>
-                                                                    <a href="{{ $user->verification->pan_card_photo_url }}" target="_blank" class="small text-teal text-decoration-none d-block mt-1" style="font-size: 0.72rem;">
-                                                                        <i class="fa-solid fa-up-right-from-square me-1"></i> Full View
-                                                                    </a>
+                                                                    <div class="mt-1.5 d-flex align-items-center justify-content-center gap-1.5 flex-wrap">
+                                                                        <a href="{{ route('admin.verification.download_pan', $user->verification->id) }}" class="btn btn-sm btn-exact-teal py-0.5 px-2 rounded-pill fw-bold" style="font-size: 0.7rem;" title="Download PAN Card">
+                                                                            <i class="fa-solid fa-download me-0.5"></i> Download
+                                                                        </a>
+                                                                        <a href="{{ $user->verification->pan_card_photo_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-0.5 px-1.5 rounded-pill small text-teal" style="font-size: 0.7rem;" title="Open in new tab">
+                                                                            <i class="fa-solid fa-up-right-from-square"></i>
+                                                                        </a>
+                                                                    </div>
                                                                 @else
                                                                     <span class="text-secondary small d-block py-3" style="font-size: 0.75rem;">Not uploaded</span>
                                                                 @endif
@@ -741,9 +786,14 @@
                                                                     <a href="{{ $user->verification->signature_photo_url }}" target="_blank" title="Click to view full Signature">
                                                                         <img src="{{ $user->verification->signature_photo_url }}" alt="Signature: {{ $user->name }}" class="img-fluid rounded" style="max-height: 120px; width: 100%; object-fit: contain;">
                                                                     </a>
-                                                                    <a href="{{ $user->verification->signature_photo_url }}" target="_blank" class="small text-info text-decoration-none d-block mt-1" style="font-size: 0.72rem;">
-                                                                        <i class="fa-solid fa-up-right-from-square me-1"></i> Full View
-                                                                    </a>
+                                                                    <div class="mt-1.5 d-flex align-items-center justify-content-center gap-1.5 flex-wrap">
+                                                                        <a href="{{ route('admin.verification.download_signature', $user->verification->id) }}" class="btn btn-sm btn-exact-teal py-0.5 px-2 rounded-pill fw-bold" style="background: linear-gradient(135deg, #0284c7, #0ea5e9); border-color: #38bdf8; font-size: 0.7rem;" title="Download Signature">
+                                                                            <i class="fa-solid fa-download me-0.5"></i> Download
+                                                                        </a>
+                                                                        <a href="{{ $user->verification->signature_photo_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-0.5 px-1.5 rounded-pill small text-info" style="font-size: 0.7rem;" title="Open in new tab">
+                                                                            <i class="fa-solid fa-up-right-from-square"></i>
+                                                                        </a>
+                                                                    </div>
                                                                 @else
                                                                     <span class="text-secondary small d-block py-3" style="font-size: 0.75rem;">Not uploaded</span>
                                                                 @endif
@@ -765,6 +815,180 @@
                                         @endif
                                     </div>
                                     <div class="modal-footer border-secondary border-opacity-25 px-4 py-2.5 d-flex justify-content-between">
+                                        <div class="d-flex gap-2">
+                                            <a href="{{ route('admin.customers.show', $user->id) }}" class="btn btn-sm btn-dark-outline rounded-pill py-1.5 px-3">
+                                                <i class="fa-regular fa-eye me-1"></i> Full Customer Profile
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-exact-teal py-1.5 px-3 rounded-pill" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#adminCustomerKycModal{{ $user->id }}">
+                                                <i class="fa-solid fa-shield-halved me-1"></i> View KYC Docs
+                                            </button>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-dark-outline rounded-pill py-1.5 px-3.5" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal: Dedicated Customer KYC Documents (PAN Card & Signature) Viewer & Downloader -->
+                        <div class="modal fade" id="adminCustomerKycModal{{ $user->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content" style="background: #0f172a; border: 1px solid rgba(0,210,170,0.35); border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+                                    <div class="modal-header border-secondary border-opacity-25 px-4 py-3">
+                                        <div class="d-flex align-items-center gap-2.5">
+                                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #00362c; border: 1.5px solid var(--teal); color: var(--teal); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; flex-shrink: 0;">
+                                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                                            </div>
+                                            <div>
+                                                <h5 class="modal-title fw-bold text-light fs-6 mb-0 d-flex align-items-center gap-2">
+                                                    <span>{{ $user->name }}</span>
+                                                    <span class="text-secondary small fw-normal">#CUST-{{ $user->id }}</span>
+                                                </h5>
+                                                <span class="text-secondary" style="font-size: 0.78rem;">{{ $user->email }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if($user->isVerified())
+                                                <span class="badge-approved"><i class="fa-solid fa-circle-check me-1"></i> verified</span>
+                                            @elseif($user->verification && $user->verification->status === 'pending')
+                                                <span class="badge-pending"><i class="fa-solid fa-clock me-1"></i> pending review</span>
+                                            @elseif($user->verification && $user->verification->status === 'rejected')
+                                                <span class="badge-rejected"><i class="fa-solid fa-circle-xmark me-1"></i> rejected</span>
+                                            @else
+                                                <span class="badge-unverified">unverified</span>
+                                            @endif
+                                            <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="modal"></button>
+                                        </div>
+                                    </div>
+                                    <div class="modal-body p-4">
+                                        @if($user->verification)
+                                            <!-- Verification Summary Banner -->
+                                            <div class="p-3 rounded-3 mb-3.5" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);">
+                                                <div class="row g-2 small" style="font-size: 0.8rem;">
+                                                    <div class="col-sm-6">
+                                                        <span class="text-secondary">Full Legal Name:</span>
+                                                        <strong class="text-light ms-1">{{ $user->verification->full_name }}</strong>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <span class="text-secondary">PAN Number:</span>
+                                                        <strong class="text-teal font-monospace ms-1">{{ $user->verification->pan_number }}</strong>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <span class="text-secondary">Bank Account:</span>
+                                                        <strong class="text-light font-monospace ms-1">{{ $user->verification->bank_account }}</strong>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <span class="text-secondary">IFSC Code:</span>
+                                                        <strong class="text-info font-monospace ms-1">{{ $user->verification->ifsc_code }}</strong>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <span class="text-secondary">Phone:</span>
+                                                        <span class="text-light ms-1">{{ $user->verification->phone }}</span>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <span class="text-secondary">Submitted:</span>
+                                                        <span class="text-light ms-1">{{ $user->verification->created_at ? $user->verification->created_at->format('M d, Y') : 'N/A' }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Document Photos & Direct Downloads -->
+                                            <div class="row g-3">
+                                                <!-- PAN Card Card -->
+                                                <div class="col-md-6 text-center">
+                                                    <div class="p-3 rounded-3 h-100 border border-secondary border-opacity-25" style="background: #070b14;">
+                                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                                            <span class="fw-bold small text-teal">
+                                                                <i class="fa-regular fa-id-card me-1"></i> PAN Card Document
+                                                            </span>
+                                                            @if($user->verification->pan_card_photo_url)
+                                                                <span class="badge py-0.5 px-2" style="background: rgba(0, 210, 170, 0.15); color: #00d2aa; font-size: 0.68rem;">Ready</span>
+                                                            @endif
+                                                        </div>
+                                                        @if($user->verification->pan_card_photo_url)
+                                                            <div class="position-relative overflow-hidden rounded-2 mb-2" style="background: #020617; border: 1px solid rgba(255,255,255,0.06);">
+                                                                <a href="{{ $user->verification->pan_card_photo_url }}" target="_blank" title="Click to view full PAN Card">
+                                                                    <img src="{{ $user->verification->pan_card_photo_url }}" alt="PAN Card: {{ $user->name }}" class="img-fluid" style="max-height: 220px; width: 100%; object-fit: contain;">
+                                                                </a>
+                                                            </div>
+                                                            <div class="mt-2.5 d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                                                <a href="{{ route('admin.verification.download_pan', $user->verification->id) }}" class="btn btn-sm btn-exact-teal py-1.5 px-3 rounded-pill fw-bold" title="Download {{ $user->name }}'s PAN Card">
+                                                                    <i class="fa-solid fa-download me-1"></i> Download PAN Card
+                                                                </a>
+                                                                <a href="{{ $user->verification->pan_card_photo_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-1.5 px-2.5 rounded-pill small text-teal" title="Open PAN Card in new tab">
+                                                                    <i class="fa-solid fa-up-right-from-square me-1"></i> Open
+                                                                </a>
+                                                            </div>
+                                                        @else
+                                                            <div class="py-5 text-secondary small">
+                                                                <i class="fa-regular fa-id-card fs-1 d-block mb-2 text-teal opacity-40"></i>
+                                                                No PAN card document uploaded
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+
+                                                <!-- Signature Card -->
+                                                <div class="col-md-6 text-center">
+                                                    <div class="p-3 rounded-3 h-100 border border-secondary border-opacity-25" style="background: #070b14;">
+                                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                                            <span class="fw-bold small text-info">
+                                                                <i class="fa-solid fa-signature me-1"></i> Customer Signature
+                                                            </span>
+                                                            @if($user->verification->signature_photo_url)
+                                                                <span class="badge py-0.5 px-2" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8; font-size: 0.68rem;">Ready</span>
+                                                            @endif
+                                                        </div>
+                                                        @if($user->verification->signature_photo_url)
+                                                            <div class="position-relative overflow-hidden rounded-2 mb-2" style="background: #020617; border: 1px solid rgba(255,255,255,0.06);">
+                                                                <a href="{{ $user->verification->signature_photo_url }}" target="_blank" title="Click to view full Signature">
+                                                                    <img src="{{ $user->verification->signature_photo_url }}" alt="Signature: {{ $user->name }}" class="img-fluid" style="max-height: 220px; width: 100%; object-fit: contain;">
+                                                                </a>
+                                                            </div>
+                                                            <div class="mt-2.5 d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                                                <a href="{{ route('admin.verification.download_signature', $user->verification->id) }}" class="btn btn-sm btn-exact-teal py-1.5 px-3 rounded-pill fw-bold" style="background: linear-gradient(135deg, #0284c7, #0ea5e9); border-color: #38bdf8;" title="Download {{ $user->name }}'s Signature">
+                                                                    <i class="fa-solid fa-download me-1"></i> Download Signature
+                                                                </a>
+                                                                <a href="{{ $user->verification->signature_photo_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-1.5 px-2.5 rounded-pill small text-info" title="Open Signature in new tab">
+                                                                    <i class="fa-solid fa-up-right-from-square me-1"></i> Open
+                                                                </a>
+                                                            </div>
+                                                        @else
+                                                            <div class="py-5 text-secondary small">
+                                                                <i class="fa-solid fa-signature fs-1 d-block mb-2 text-info opacity-40"></i>
+                                                                No signature photo uploaded
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            @if($user->verification->status === 'pending')
+                                                <!-- Quick Review Actions if Pending -->
+                                                <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 d-flex gap-2 justify-content-end align-items-center">
+                                                    <span class="text-secondary small me-auto">This verification is awaiting your review:</span>
+                                                    <form action="{{ route('admin.verification.approve', $user->verification->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-exact-teal py-1.5 px-3.5 rounded-pill fw-bold">
+                                                            <i class="fa-solid fa-check me-1"></i> Approve KYC
+                                                        </button>
+                                                    </form>
+                                                    <button type="button" class="btn btn-sm btn-danger py-1.5 px-3.5 rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#rejectCustomerVerModal{{ $user->id }}">
+                                                        <i class="fa-solid fa-xmark me-1"></i> Reject
+                                                    </button>
+                                                </div>
+                                            @endif
+                                        @else
+                                            <div class="text-center py-5">
+                                                <i class="fa-solid fa-shield-slash fs-1 text-secondary opacity-40 mb-3 d-block"></i>
+                                                <h6 class="text-light fw-bold">No KYC Verification Documents Submitted Yet</h6>
+                                                <p class="text-secondary small mb-3">This customer ({{ $user->name }}) has not submitted their PAN card or signature documents yet.</p>
+                                                <a href="{{ route('admin.customers.show', $user->id) }}" class="btn btn-sm btn-dark-outline rounded-pill py-1.5 px-3">
+                                                    <i class="fa-regular fa-eye me-1"></i> View Customer Profile
+                                                </a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="modal-footer border-secondary border-opacity-25 px-4 py-2.5 d-flex justify-content-between">
                                         <a href="{{ route('admin.customers.show', $user->id) }}" class="btn btn-sm btn-dark-outline rounded-pill py-1.5 px-3">
                                             <i class="fa-regular fa-eye me-1"></i> Full Customer Profile
                                         </a>
@@ -773,6 +997,33 @@
                                 </div>
                             </div>
                         </div>
+
+                        @if($user->verification && $user->verification->status === 'pending')
+                            <!-- Modal: Quick Reject Verification from Customer List -->
+                            <div class="modal fade" id="rejectCustomerVerModal{{ $user->id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content" style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;">
+                                        <div class="modal-header border-secondary border-opacity-25">
+                                            <h5 class="modal-title fw-bold text-danger fs-6">Reject Verification: {{ $user->name }}</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form action="{{ route('admin.verification.reject', $user->verification->id) }}" method="POST">
+                                            @csrf
+                                            <div class="modal-body p-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label small fw-semibold" style="color: #94a3b8;">Rejection Reason</label>
+                                                    <textarea name="rejection_reason" class="form-control exact-input" rows="3" required placeholder="State reason for rejection..."></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer border-secondary border-opacity-25">
+                                                <button type="button" class="btn btn-dark-outline py-1.5 px-3 small" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-danger py-1.5 px-3 small rounded-3 fw-bold">Reject Verification</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     @empty
                         <tr>
                             <td colspan="5" class="text-center py-4" style="color: #64748b; font-size: 0.86rem;">No customers found.</td>
@@ -785,7 +1036,256 @@
     </div>
 
     <!-- =========================================================================
-         CARD 4: COPYRIGHT CLAIM REMOVE LINKS (Exact match to Reference Image)
+         CARD 4: CUSTOMER UPLOADED SONGS & AUDIO CATALOG (3000 × 3000 PX & MP3)
+         ========================================================================= -->
+    <div class="exact-card mb-4" id="adminUploadedSongsSection">
+        
+        <!-- Header with Count Badge and Search Form -->
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-compact-disc text-teal" style="font-size: 1rem;"></i>
+                <h2 class="h6 fw-bold text-light mb-0" style="font-size: 0.95rem;">Customer uploaded songs &amp; audio catalog</h2>
+                <span class="badge rounded-pill fw-bold px-2.5 py-0.5" style="background: rgba(0, 210, 170, 0.2); color: #00d2aa; border: 1px solid rgba(0, 210, 170, 0.4); font-size: 0.72rem;">
+                    {{ $allSongs->total() }} Tracks
+                </span>
+            </div>
+
+            <!-- Search Form for Songs -->
+            <form action="{{ route('admin.dashboard') }}" method="GET" class="d-flex align-items-center gap-2">
+                @if(request('search'))
+                    <input type="hidden" name="search" value="{{ request('search') }}">
+                @endif
+                @if(request('withdrawal_status'))
+                    <input type="hidden" name="withdrawal_status" value="{{ request('withdrawal_status') }}">
+                @endif
+                <div class="input-group input-group-sm" style="min-width: 260px; max-width: 340px;">
+                    <span class="input-group-text bg-dark border-secondary border-opacity-25 text-secondary">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" name="song_search" class="form-control form-control-sm exact-input" placeholder="Search track, artist, customer..." value="{{ $songSearch ?? '' }}">
+                    @if(!empty($songSearch))
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-secondary border-secondary border-opacity-25 text-light" title="Clear Search">
+                            <i class="fa-solid fa-xmark"></i>
+                        </a>
+                    @endif
+                    <button class="btn btn-sm btn-exact-teal" type="submit">Filter</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table-custom-dark">
+                <thead>
+                    <tr>
+                        <th style="width: 72px;">Cover</th>
+                        <th>Song Information</th>
+                        <th>Customer</th>
+                        <th style="min-width: 240px;">MP3 Stream</th>
+                        <th class="text-end" style="min-width: 170px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($allSongs as $song)
+                        <tr>
+                            <!-- 3000x3000px Cover Artwork Thumbnail -->
+                            <td>
+                                <div class="position-relative" style="width: 58px; height: 58px; border-radius: 10px; overflow: hidden; border: 1.5px solid rgba(0, 210, 170, 0.35); background: #070b14; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                                    <img src="{{ $song->cover_image_url }}" alt="{{ $song->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    <button type="button" class="btn btn-sm position-absolute top-0 end-0 p-0.5 m-0.5 rounded-circle" style="background: rgba(0,0,0,0.75); color: #00d2aa; border: none; font-size: 0.65rem; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;" title="Zoom 3000 × 3000 px Cover Art" data-bs-toggle="modal" data-bs-target="#adminCoverZoomModal{{ $song->id }}">
+                                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                    </button>
+                                </div>
+                            </td>
+
+                            <!-- Complete Song Details: Title, Singer, Composer, Producer, Copyright -->
+                            <td>
+                                <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                                    <div class="fw-bold text-light" style="font-size: 0.94rem;">{{ $song->title }}</div>
+                                    <span class="badge rounded-pill small px-2 py-0.5" style="background: rgba(0, 210, 170, 0.15); color: #00d2aa; font-size: 0.68rem; border: 1px solid rgba(0, 210, 170, 0.3);">
+                                        3000 &times; 3000 px
+                                    </span>
+                                </div>
+                                <div class="small mb-1" style="color: #00d2aa; font-size: 0.82rem; font-weight: 600;">
+                                    <i class="fa-solid fa-microphone me-1"></i> Singer: {{ $song->singer }}
+                                </div>
+                                <div class="small text-secondary" style="font-size: 0.78rem;">
+                                    <span>Lyrics/Composer: <strong class="text-light">{{ $song->composer }}</strong></span> &bull; 
+                                    <span>Producer: <strong class="text-light">{{ $song->producer }}</strong></span>
+                                </div>
+                                <div class="mt-1 d-inline-flex align-items-center gap-1 px-2 py-0.5 rounded-pill small" style="background: rgba(0, 210, 170, 0.08); color: #00d2aa; border: 1px solid rgba(0, 210, 170, 0.25); font-size: 0.72rem;">
+                                    <i class="fa-regular fa-copyright"></i> {{ $song->copyright ?: '℗ 2026 Rajdoot Nivedan' }}
+                                </div>
+                            </td>
+
+                            <!-- Associated Customer Profile -->
+                            <td>
+                                @if($song->user)
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div style="width: 32px; height: 32px; border-radius: 50%; background: #00362c; border: 1.5px solid var(--teal); color: var(--teal); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.78rem; flex-shrink: 0;">
+                                            {{ strtoupper(substr($song->user->name, 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <a href="{{ route('admin.customers.show', $song->user->id) }}" class="fw-bold text-light text-decoration-none d-block" style="font-size: 0.88rem;" title="View Customer Profile">
+                                                {{ $song->user->name }}
+                                            </a>
+                                            <div class="small" style="color: #94a3b8; font-size: 0.76rem;">
+                                                {{ $song->user->username ? '@'.$song->user->username : $song->user->email }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="text-secondary small">&mdash; Unknown Customer &mdash;</span>
+                                @endif
+                            </td>
+
+                            <!-- MP3 Stream & Player -->
+                            <td>
+                                <div class="p-2 rounded-3" style="background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.06);">
+                                    <div class="d-flex align-items-center justify-content-between small mb-1" style="font-size: 0.74rem;">
+                                        <span class="text-teal fw-semibold"><i class="fa-solid fa-play me-1"></i> MP3 Audio</span>
+                                        <span class="text-secondary">{{ $song->created_at->format('M d, Y') }}</span>
+                                    </div>
+                                    <audio controls class="w-100" style="height: 32px; border-radius: 6px;" preload="none" src="{{ $song->audio_file_url }}"></audio>
+                                </div>
+                            </td>
+
+                            <!-- Actions: Download MP3, Inspect Cover, Edit, Delete -->
+                            <td class="text-end">
+                                <div class="d-inline-flex align-items-center gap-2">
+                                    <!-- Download MP3 Button -->
+                                    <a href="{{ route('admin.songs.download', $song->id) }}" class="btn btn-sm btn-exact-teal py-1.5 px-3 small fw-bold d-inline-flex align-items-center gap-1.5 text-nowrap" title="Download original MP3 audio file">
+                                        <i class="fa-solid fa-download"></i> <span>Download MP3</span>
+                                    </a>
+
+                                    <!-- Cover Zoom Preview Button -->
+                                    <button type="button" class="admin-action-link" data-bs-toggle="modal" data-bs-target="#adminCoverZoomModal{{ $song->id }}" title="Inspect 3000 × 3000 px Cover Artwork">
+                                        <i class="fa-regular fa-image"></i>
+                                    </button>
+
+                                    <!-- Edit Song Modal Trigger -->
+                                    <button type="button" class="admin-action-link" data-bs-toggle="modal" data-bs-target="#adminMainEditSongModal{{ $song->id }}" title="Edit Song Details">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </button>
+
+                                    <!-- Delete Song Form -->
+                                    <form action="{{ route('admin.songs.destroy', $song->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Permanently delete song &quot;{{ $song->title }}&quot; and its audio/cover files?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="admin-action-link delete-link" title="Delete Song">
+                                            <i class="fa-regular fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Modal: Zoom 3000x3000px Cover Artwork -->
+                        <div class="modal fade" id="adminCoverZoomModal{{ $song->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content" style="background: #0f172a; border: 1px solid rgba(0,210,170,0.3); border-radius: 18px; box-shadow: 0 25px 50px rgba(0,0,0,0.85);">
+                                    <div class="modal-header border-secondary border-opacity-25">
+                                        <h5 class="modal-title fw-bold text-light fs-6">
+                                            <i class="fa-regular fa-image text-teal me-2"></i> 3000 &times; 3000 px Artwork: {{ $song->title }}
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body p-4 text-center">
+                                        <div class="p-2 rounded-3 bg-black border border-secondary border-opacity-25 d-inline-block mb-3">
+                                            <img src="{{ $song->cover_image_url }}" alt="{{ $song->title }}" class="img-fluid rounded" style="max-height: 480px; object-fit: contain;">
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
+                                            <span class="badge px-3 py-1.5 rounded-pill" style="background: rgba(0, 210, 170, 0.15); color: #00d2aa; border: 1px solid rgba(0, 210, 170, 0.35);">
+                                                Full 3000 &times; 3000 px High-Res Artwork
+                                            </span>
+                                            <a href="{{ $song->cover_image_url }}" download="{{ Str::slug($song->title) }}-cover.jpg" target="_blank" class="btn btn-sm btn-exact-teal py-1.5 px-3 rounded-pill fw-bold">
+                                                <i class="fa-solid fa-download me-1"></i> Download Cover
+                                            </a>
+                                            <a href="{{ $song->cover_image_url }}" target="_blank" class="btn btn-sm btn-dark-outline py-1.5 px-3 rounded-pill">
+                                                <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open Full Image
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-secondary border-opacity-25">
+                                        <button type="button" class="btn btn-dark-outline py-1.5 px-3 small" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal: Edit Song from Main Dashboard -->
+                        <div class="modal fade" id="adminMainEditSongModal{{ $song->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content" style="background: #0f172a; border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; box-shadow: 0 25px 50px rgba(0,0,0,0.85);">
+                                    <div class="modal-header border-secondary border-opacity-25">
+                                        <h5 class="modal-title fw-bold text-light fs-6">
+                                            <i class="fa-solid fa-pen-to-square text-teal me-2"></i> Edit Song: {{ $song->title }}
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <form action="{{ route('admin.songs.update', $song->id) }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="modal-body p-4 text-start">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label small fw-semibold text-secondary">Song Title</label>
+                                                    <input type="text" name="title" class="form-control exact-input" value="{{ $song->title }}" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label small fw-semibold text-secondary">Singer</label>
+                                                    <input type="text" name="singer" class="form-control exact-input" value="{{ $song->singer }}" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label small fw-semibold text-secondary">Lyrics / Composer</label>
+                                                    <input type="text" name="composer" class="form-control exact-input" value="{{ $song->composer }}" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label small fw-semibold text-secondary">Producer</label>
+                                                    <input type="text" name="producer" class="form-control exact-input" value="{{ $song->producer }}" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label small fw-semibold text-secondary">Replace Cover (Optional)</label>
+                                                    <input type="file" name="cover_image" class="form-control exact-input" accept="image/jpeg,image/png,image/jpg,image/webp">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label small fw-semibold text-secondary">Replace MP3 (Optional)</label>
+                                                    <input type="file" name="audio_file" class="form-control exact-input" accept=".mp3,audio/mpeg,audio/mp3">
+                                                </div>
+                                                <div class="col-12">
+                                                    <label class="form-label small fw-semibold text-secondary">Copyright &mdash; P-Line</label>
+                                                    <input type="text" name="copyright" class="form-control exact-input" value="{{ $song->copyright ?: '℗ 2026 Rajdoot Nivedan' }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-secondary border-opacity-25">
+                                            <button type="button" class="btn btn-dark-outline py-1.5 px-3 small" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-exact-teal py-1.5 px-3">Save Changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-4" style="color: #64748b; font-size: 0.86rem;">
+                                No customer songs uploaded yet.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        @if($allSongs->hasPages())
+            <div class="mt-3 d-flex justify-content-end">
+                {{ $allSongs->appends(request()->except('songs_page'))->links('pagination::bootstrap-5') }}
+            </div>
+        @endif
+
+    </div>
+
+    <!-- =========================================================================
+         CARD 5: COPYRIGHT CLAIM REMOVE LINKS (Exact match to Reference Image)
          ========================================================================= -->
     <div class="exact-card mb-4">
         

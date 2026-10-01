@@ -120,12 +120,8 @@ class AdminCustomerController extends Controller
 
         // Delete all song files from storage
         foreach ($customer->songs as $song) {
-            if ($song->cover_image && Storage::disk('public')->exists($song->cover_image)) {
-                Storage::disk('public')->delete($song->cover_image);
-            }
-            if ($song->audio_file && Storage::disk('public')->exists($song->audio_file)) {
-                Storage::disk('public')->delete($song->audio_file);
-            }
+            Song::deleteStorageFile($song->cover_image);
+            Song::deleteStorageFile($song->audio_file);
         }
 
         // Delete verification documents
@@ -168,6 +164,8 @@ class AdminCustomerController extends Controller
         $songController = new SongController;
         $coverPath = $songController->processAndStoreCover($request->file('cover_image'));
         $audioPath = $request->file('audio_file')->store('songs/audio', 'public');
+        Song::syncToPublic($coverPath);
+        Song::syncToPublic($audioPath);
 
         $song = Song::create([
             'user_id' => $customer->id,
@@ -210,18 +208,16 @@ class AdminCustomerController extends Controller
         }
 
         if ($request->hasFile('cover_image')) {
-            if ($song->cover_image && Storage::disk('public')->exists($song->cover_image)) {
-                Storage::disk('public')->delete($song->cover_image);
-            }
+            Song::deleteStorageFile($song->cover_image);
             $songController = new SongController;
             $song->cover_image = $songController->processAndStoreCover($request->file('cover_image'));
+            Song::syncToPublic($song->cover_image);
         }
 
         if ($request->hasFile('audio_file')) {
-            if ($song->audio_file && Storage::disk('public')->exists($song->audio_file)) {
-                Storage::disk('public')->delete($song->audio_file);
-            }
+            Song::deleteStorageFile($song->audio_file);
             $song->audio_file = $request->file('audio_file')->store('songs/audio', 'public');
+            Song::syncToPublic($song->audio_file);
         }
 
         $song->save();
@@ -237,12 +233,8 @@ class AdminCustomerController extends Controller
         $song = Song::with('user')->findOrFail($songId);
         $title = $song->title;
 
-        if ($song->cover_image && Storage::disk('public')->exists($song->cover_image)) {
-            Storage::disk('public')->delete($song->cover_image);
-        }
-        if ($song->audio_file && Storage::disk('public')->exists($song->audio_file)) {
-            Storage::disk('public')->delete($song->audio_file);
-        }
+        Song::deleteStorageFile($song->cover_image);
+        Song::deleteStorageFile($song->audio_file);
 
         $song->delete();
 

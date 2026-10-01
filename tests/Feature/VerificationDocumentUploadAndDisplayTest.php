@@ -152,4 +152,125 @@ class VerificationDocumentUploadAndDisplayTest extends TestCase
         $this->assertEquals($origPan, $updated->pan_card_photo);
         $this->assertEquals($origSig, $updated->signature_photo);
     }
+
+    public function test_admin_can_download_customer_pan_card_and_signature(): void
+    {
+        Storage::fake('public');
+
+        $panFile = UploadedFile::fake()->image('amit_pan.jpg', 600, 400);
+        $sigFile = UploadedFile::fake()->image('amit_sig.png', 300, 150);
+
+        $this->actingAs($this->customer)->post(route('customer.verification.submit'), [
+            'full_name' => 'Amit Sharma',
+            'pan_number' => 'ABCDE1234F',
+            'pan_card_photo' => $panFile,
+            'signature_photo' => $sigFile,
+            'bank_account' => '123456789012',
+            'ifsc_code' => 'HDFC0001234',
+            'phone' => '+91 9876543210',
+            'email' => 'amit@example.com',
+        ]);
+
+        $verification = $this->customer->fresh()->verification;
+
+        // 1. Admin can download PAN card via admin.verification.download_pan
+        $panDownloadResponse = $this->actingAs($this->admin)->get(route('admin.verification.download_pan', $verification->id));
+        $panDownloadResponse->assertStatus(200);
+        $this->assertStringContainsString('pan-card', (string) $panDownloadResponse->headers->get('content-disposition'));
+
+        // 2. Admin can download PAN card via admin.customers.download_pan
+        $custPanResponse = $this->actingAs($this->admin)->get(route('admin.customers.download_pan', $this->customer->id));
+        $custPanResponse->assertStatus(200);
+        $this->assertStringContainsString('pan-card', (string) $custPanResponse->headers->get('content-disposition'));
+
+        // 3. Admin can download Signature via admin.verification.download_signature
+        $sigDownloadResponse = $this->actingAs($this->admin)->get(route('admin.verification.download_signature', $verification->id));
+        $sigDownloadResponse->assertStatus(200);
+        $this->assertStringContainsString('signature', (string) $sigDownloadResponse->headers->get('content-disposition'));
+
+        // 4. Admin can download Signature via admin.customers.download_signature
+        $custSigResponse = $this->actingAs($this->admin)->get(route('admin.customers.download_signature', $this->customer->id));
+        $custSigResponse->assertStatus(200);
+        $this->assertStringContainsString('signature', (string) $custSigResponse->headers->get('content-disposition'));
+    }
+
+    public function test_admin_dashboard_and_customer_show_pages_contain_document_modals_and_download_links(): void
+    {
+        Storage::fake('public');
+
+        $panFile = UploadedFile::fake()->image('custom_pan.jpg', 600, 400);
+        $sigFile = UploadedFile::fake()->image('custom_sig.png', 300, 150);
+
+        $this->actingAs($this->customer)->post(route('customer.verification.submit'), [
+            'full_name' => 'Amit Sharma',
+            'pan_number' => 'ABCDE1234F',
+            'pan_card_photo' => $panFile,
+            'signature_photo' => $sigFile,
+            'bank_account' => '123456789012',
+            'ifsc_code' => 'HDFC0001234',
+            'phone' => '+91 9876543210',
+            'email' => 'amit@example.com',
+        ]);
+
+        $verification = $this->customer->fresh()->verification;
+
+        // Admin dashboard view
+        $dashboardResponse = $this->actingAs($this->admin)->get(route('admin.dashboard'));
+        $dashboardResponse->assertStatus(200);
+        $dashboardResponse->assertSee("adminCustomerKycModal{$this->customer->id}", false);
+        $dashboardResponse->assertSee('KYC Docs');
+        $dashboardResponse->assertSee(route('admin.verification.download_pan', $verification->id));
+        $dashboardResponse->assertSee(route('admin.verification.download_signature', $verification->id));
+
+        // Customer show view
+        $showResponse = $this->actingAs($this->admin)->get(route('admin.customers.show', $this->customer->id));
+        $showResponse->assertStatus(200);
+        $showResponse->assertSee(route('admin.verification.download_pan', $verification->id));
+        $showResponse->assertSee(route('admin.verification.download_signature', $verification->id));
+        $showResponse->assertSee('Download PAN');
+        $showResponse->assertSee('Download Signature');
+    }
+
+    public function test_unauthorized_user_cannot_download_verification_documents(): void
+    {
+        Storage::fake('public');
+
+        $panFile = UploadedFile::fake()->image('secure_pan.jpg', 600, 400);
+        $sigFile = UploadedFile::fake()->image('secure_sig.png', 300, 150);
+
+        $this->actingAs($this->customer)->post(route('customer.verification.submit'), [
+            'full_name' => 'Amit Sharma',
+            'pan_number' => 'ABCDE1234F',
+            'pan_card_photo' => $panFile,
+            'signature_photo' => $sigFile,
+            'bank_account' => '123456789012',
+            'ifsc_code' => 'HDFC0001234',
+            'phone' => '+91 9876543210',
+            'email' => 'amit@example.com',
+        ]);
+
+        $verification = $this->customer->fresh()->verification;
+
+        // Another non-admin customer
+        $otherCustomer = User::create([
+            'name' => 'Other Customer',
+            'username' => 'othercust',
+            'email' => 'other@example.com',
+            'password' => bcrypt('password123'),
+            'is_admin' => false,
+        ]);
+
+        // Attempt as another customer -> forbidden (403)
+        $this->actingAs($otherCustomer)->get(route('admin.verification.download_pan', $verification->id))
+            ->assertStatus(403);
+        $this->actingAs($otherCustomer)->get(route('admin.verification.download_signature', $verification->id))
+            ->assertStatus(403);
+
+        // Attempt as guest -> redirect to login (302)
+        auth()->logout();
+        $this->get(route('admin.verification.download_pan', $verification->id))
+            ->assertRedirect(route('login'));
+        $this->get(route('admin.verification.download_signature', $verification->id))
+            ->assertRedirect(route('login'));
+    }
 }
