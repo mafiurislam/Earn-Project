@@ -1,7 +1,10 @@
 *
 !.gitignore
 !verifications/
-!verifications/dummy_pan.jpg
-!verifications/dummy_sig.jpg
-!verifications/sample_pan.png
-!verifications/sample_sig.png
+!verifications/*
+!songs/
+!songs/covers/
+!songs/covers/*
+!songs/audio/
+!songs/audio/*
+
